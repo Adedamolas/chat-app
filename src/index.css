@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    font-family: Satoshi;
+    /* background: black; */
+  }
+  article {
+    margin: 0;
+    margin-left: 0;
+  }
+  @font-face {
+    font-family: Satoshi;
+    src: url(../public/Satoshi-Regular.ttf);
+  }
+  button {
+    border-radius: 8px;
+    border: 1px solid rgb(0, 0, 0);
+    padding: 0.4em 0.8em;
+    color: rgb(0, 0, 0);
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: transparent;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  button:hover{
+    background: rgb(0, 0, 0);
+    color: rgb(255, 255, 255);
+    border-color: transparent;
+  }
+  h1 {
+    font-size: 4rem;
+    font-weight: 900;
+  }
+  h2 {
+    font-size: 2.2rem;
+  }
+  h3 {
+    font-size: 2rem;
+  }
+  h4 {
+    font-size: 1rem;
+  }
+  h5 {
+    font-size: 0.7rem;
+  }
+  p {
+    margin: 0;
+  }
+  input {
+    border: 2px solid rgb(0, 0, 0);
+    background: transparent;
+    padding: 10px;
+    color: rgb(0, 0, 0);
+    width: 30vw;
+  }
+  textarea {
+    color: rgb(0, 0, 0);
+    border: 2px solid rgb(0, 0, 0);
+    background: transparent;
+    padding: 10px;
+    width: 30VW;
+    height: 30VH;
+  }
+}
