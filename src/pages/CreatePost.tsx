@@ -10,13 +10,15 @@ import {
   uploadBytes,
   uploadBytesResumable,
 } from "firebase/storage";
+import Loader from "../loader/Loader";
 
 export default function CreatePost() {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [postText, setPostText] = useState("");
   const [imageUpload, setImageUpload] = useState<File | null>(null);
-  const [loading, setLoading] = useState<boolean>(false)
+  const [niche, setNiche] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const [uploading, setUploading] = useState<boolean>(false);
   const [progress, setProgress] = useState<number>(0);
 
@@ -34,7 +36,7 @@ export default function CreatePost() {
       console.error("No authenticated user found");
       return;
     }
-    setLoading(true)
+    setLoading(true);
     let imageUrl = "";
 
     if (imageUpload) {
@@ -53,7 +55,7 @@ export default function CreatePost() {
             console.error("Image upload failed:", error);
             reject(error);
             setUploading(false);
-            setLoading(false)
+            setLoading(false);
           },
           async () => {
             imageUrl = await getDownloadURL(uploadTask.snapshot.ref);
@@ -75,13 +77,23 @@ export default function CreatePost() {
           profile_image: auth.currentUser?.photoURL,
         },
         createdAt: new Date(),
+        niche,
       });
       navigate("/");
-      setLoading(false)
+      setLoading(true);
     } catch (error) {
       console.error("Error adding document:", error);
     }
   };
+
+    if (loading) {
+    return (
+      <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20">
+        Creating Post....
+        <Loader />
+      </div>
+    );
+  }
   return (
     <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center py-20">
       <h3>Create-Post</h3>
@@ -99,6 +111,21 @@ export default function CreatePost() {
           placeholder="Type in text"
           onChange={(event) => setPostText(event.target.value)}
         />
+        <div className=" flex flex-col gap-5 bg-black p-2 rounded-lg">
+          <select
+            value={niche}
+            onChange={(e) => setNiche(e.target.value)}
+            className=" px-2 py-2 border-black border-2 rounded-md"
+          >
+            <option value="">Select Niche</option>
+            <option value="Technology">Technology</option>
+            <option value="Health">Health</option>
+            <option value="Finance">Finance</option>
+            <option value="Lifestyle">Lifestyle</option>
+            <option value="Personal">Personal</option>
+            <option value="Entertainment">Entertainment</option>
+          </select>
+        </div>
         <div className=" flex flex-col items-start space-y-3">
           <label htmlFor="image"> Submit Image </label>
           <input

@@ -66,4 +66,8 @@
     width: 30VW;
     height: 30VH;
   }
+  select{
+    background: black;
+    color: white;
+  }
 }
