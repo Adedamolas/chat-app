@@ -86,7 +86,7 @@ export default function CreatePost() {
     }
   };
 
-    if (loading) {
+  if (loading) {
     return (
       <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20">
         Creating Post....
@@ -95,9 +95,9 @@ export default function CreatePost() {
     );
   }
   return (
-    <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center py-20">
+    <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center py-36 sm:py-20 items-center">
       <h3>Create-Post</h3>
-      <div className=" flex flex-col gap-5 items-start justify-center">
+      <div className=" flex flex-col gap-5 items-start text-start justify-center place-items-center pl-16">
         <label htmlFor="Title">Title</label>
         <input
           required
@@ -111,6 +111,7 @@ export default function CreatePost() {
           placeholder="Type in text"
           onChange={(event) => setPostText(event.target.value)}
         />
+        <label htmlFor="Niche">Niche</label>
         <div className=" flex flex-col gap-5 bg-black p-2 rounded-lg">
           <select
             value={niche}

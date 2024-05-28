@@ -7,8 +7,8 @@ interface Props {
 }
 export default function Navbar({ isAuth, signUserOut }: Props) {
   return (
-    <nav className=" flex flex-row w-full justify-between items-center list-none py-3 text-xl px-32 fixed top-0 backdrop-blur-md z-10">
-      <div className=" flex flex-row gap-5 items-baseline">
+    <nav className=" flex flex-col sm:flex-row sm:px-32 md-px-32 w-full justify-between items-center list-none py-3 text-xl px-5 fixed top-0 backdrop-blur-md z-10">
+      <div className=" flex flex-col sm:flex-row gap-5 items-center text-sm sm:text-lg sm:items-baseline">
         <h2>Blogr</h2>
         <ul className=" flex flex-row items-center justify-center">
           <a href={"/"} className=" p-3 rounded-full">

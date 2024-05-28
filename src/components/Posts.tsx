@@ -10,7 +10,7 @@ export default function Posts() {
   const { posts } = useContext(AppContext);
   const maxLength = 12;
   return (
-    <div className="grid flex-col gap-10 grid-cols-4 w-full justify-center place-items-center align-middle items-center px-20">
+    <div className="grid flex-col gap-10 grid-cols-1 md:grid-cols-4 w-full justify-center place-items-center align-middle items-center px-20">
       {posts.map((post: Post) => {
         return (
           <div

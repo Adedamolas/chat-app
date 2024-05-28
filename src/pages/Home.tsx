@@ -46,7 +46,7 @@ export default function Home() {
   //   );
   // }
   return (
-    <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20 space-y-10">
+    <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20 pt-52 sm:pt-0 space-y-10">
       <>
         <Header randomPost={randomPost} />
       </>

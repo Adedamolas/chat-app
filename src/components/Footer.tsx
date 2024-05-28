@@ -31,13 +31,13 @@ export default function Footer() {
 
               <div className="flex flex-col items-start mt-5 space-y-2">
                 <a
-                  href="#"
+                  href={"/"}
                   className="text-gray-600 transition-colors duration-300 dark:text-gray-300 dark:hover:text-blue-400 hover:underline hover:text-blue-500"
                 >
                   Home
                 </a>
                 <a
-                  href="#"
+                  href={"/"}
                   className="text-gray-600 transition-colors duration-300 dark:text-gray-300 dark:hover:text-blue-400 hover:underline hover:text-blue-500"
                 >
                   Blog
@@ -53,24 +53,24 @@ export default function Footer() {
 
             <div>
               <p className="font-semibold text-gray-800 dark:text-white">
-                Industries
+                Links
               </p>
 
               <div className="flex flex-col items-start mt-5 space-y-2">
                 <a
-                  href="#"
+                  href={"create-post"}
                   className="text-gray-600 transition-colors duration-300 dark:text-gray-300 dark:hover:text-blue-400 hover:underline hover:text-blue-500"
                 >
                   Single Post
                 </a>
                 <a
-                  href="#"
+                  href={"/posts"}
                   className="text-gray-600 transition-colors duration-300 dark:text-gray-300 dark:hover:text-blue-400 hover:underline hover:text-blue-500"
                 >
                   Posts
                 </a>
                 <a
-                  href="#"
+                  href={"/authors"}
                   className="text-gray-600 transition-colors duration-300 dark:text-gray-300 dark:hover:text-blue-400 hover:underline hover:text-blue-500"
                 >
                   Authors

@@ -13,11 +13,13 @@ export default function Header({ randomPost }: Props) {
     <>
       {randomPost && (
         <div
-          className=" bg-no-repeat bg-cover bg-center flex flex-row justify-start px-10 items-end h-[80vh] w-[80vw] rounded-2xl relative mb-20"
+          className=" bg-no-repeat bg-cover bg-center flex flex-row justify-start px-10 items-end h-[50vh] sm:h-[80vh] w-[80vw] rounded-2xl relative mt-20 mb-60 sm:mb-20"
           style={{ backgroundImage: `url(${randomPost.imageUrl})` }}
         >
-          <div className=" bg-white text-black w-1/2 p-6 rounded-2xl space-y-2 shadow-blue-100 drop-shadow-lg absolute -bottom-16">
-            <h2 className=" text-gray-400">FEATURED ARTICLE</h2>
+          <div className=" bg-white text-black sm:w-1/2 h-fit sm:h-min p-6 rounded-2xl space-y-2 shadow-blue-100 drop-shadow-lg absolute sm:-bottom-16 -bottom-56 sm:left-10 left-0 w-full">
+            <h2 className=" text-gray-400 sm:text-2xl text-lg">
+              FEATURED ARTICLE
+            </h2>
             <h4 className=" bg-black text-white p-2 rounded-md w-min">
               <CapitalizeWords text={randomPost.niche} />{" "}
             </h4>
