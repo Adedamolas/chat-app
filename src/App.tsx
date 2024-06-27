@@ -1,9 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  Route,
-  BrowserRouter as Router,
-  Routes,
-} from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes, useParams } from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./Navbar";
 import CreatePost from "./pages/CreatePost";
@@ -28,6 +24,7 @@ import { Authors } from "./types/types";
 import Author from "./pages/Author";
 import Stories from "./pages/Stories";
 import Footer from "./components/Footer";
+import PostDetail from "./pages/PostDetail";
 
 interface Post {
   id: string;
@@ -48,6 +45,9 @@ export default function App() {
   const [randomPost, setRandomPost] = useState<Post | null>(null);
   const [authors, setAuthors] = useState<Authors[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [postDetail, setPostDetail] = useState<Post | null>(null);
+  const { postId } = useParams<{ postId: string }>();
+
   const maxLength = 10;
 
   const signUserOut = () => {
@@ -93,7 +93,6 @@ export default function App() {
     fetchPosts();
   }, []);
 
-  
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -135,6 +134,26 @@ export default function App() {
   }, []);
 
 
+    //FETCH POST WHICH IS CLICKED ON
+    useEffect(() => {
+      console.log("POST ID:", postId);
+      const fetchPost = async () => {
+        if (postId) {
+          const postDetailDocRef = doc(db, "posts", postId);
+          const postDoc = await getDoc(postDetailDocRef);
+
+          if (postDoc.exists()) {
+            setPostDetail({ id: postDoc.id, ...postDoc.data() } as Post);
+          } else {
+            console.log("no such document boss");
+            
+          }
+        }
+      };
+      fetchPost();
+      console.log(postDetail)
+    }, [postId]);
+
   const deletePost = async (postId: string, imageUrl: string) => {
     try {
       // Delete the post document from Firestore
@@ -172,6 +191,8 @@ export default function App() {
         authors,
         loading,
         setLoading,
+        postDetail,
+        setPostDetail
       }}
     >
       <main className=" bg-white text-black h-max">
@@ -181,6 +202,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/posts" element={<Stories />} />
+            <Route path="/post/:postId" element={<PostDetail postDetail= {postDetail} />} />
             <Route path="/authors" element={<Author />} />
             <Route
               path="/LOGIN"
