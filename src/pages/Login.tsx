@@ -10,11 +10,11 @@ interface Props {
 export default function Login({ signInWithGoogle }: Props) {
   const { isAuth } = useContext(AppContext);
   const navigate = useNavigate();
-  // useEffect(() => {
-  //   if (isAuth) {
-  //     navigate("/");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (isAuth) {
+      navigate("/");
+    }
+  }, []);
   return (
     <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center py-20">
       <div className=" flex flex-col text-center space-y-2">

@@ -15,8 +15,8 @@
     font-family: Satoshi;
     src: url(../public/Satoshi-Regular.ttf);
   }
-  button {
-    width: 100%;
+  button, select {
+    width: fit-content;
     padding: 0.625rem 1.5rem;
     font-size: 0.875rem;
     line-height: 1.25rem;
@@ -36,13 +36,13 @@
     background-color: rgb(31 41 55 / var(--tw-bg-opacity));
     border-radius: 0.5rem;
   }
-  button:hover {
+  button, select:hover {
     /* background: rgb(0, 0, 0); */
     background-color: rgb(55 65 81 / var(--tw-bg-opacity));
     color: rgb(255, 255, 255);
     border-color: transparent;
   }
-  button:focus {
+  button, select:focus {
     --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
       var(--tw-ring-offset-width) var(--tw-ring-offset-color);
     --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
@@ -79,6 +79,7 @@
   }
   input {
     border: 2px solid rgb(0, 0, 0);
+    border-radius: 5px;
     background: transparent;
     padding: 10px;
     color: rgb(0, 0, 0);
@@ -86,16 +87,28 @@
   }
   textarea {
     color: rgb(0, 0, 0);
-    border: 2px solid rgb(0, 0, 0);
+    border-bottom: 2px solid black;
     background: transparent;
     padding: 10px;
-    width: 30vw;
+    width: 70vw;
     height: 30vh;
   }
-  select {
+  textarea:focus{
+    border: none;
+  }
+  label{
+    font-weight: 900;
+    font-size:larger
+    ;
+  }
+  .dropdown{
+    background: #1f293780;
+    backdrop-filter: blur(30px);
+  }
+  /* select {
     background: black;
     color: white;
-  }
+  } */
 
   @media screen and (max-width: 800px) {
     input {

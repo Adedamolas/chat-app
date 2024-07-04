@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.1",
     "@remixicon/react": "^4.2.0",
     "@types/prop-types": "^15.7.12",
     "firebase": "^10.12.0",

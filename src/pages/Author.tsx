@@ -1,10 +1,18 @@
 import { useContext } from "react";
 import { AppContext } from "../helpers/Context";
 import { Authors } from "../types/types";
+import Loader from "../loader/Loader";
 
 export default function Author() {
-  const { loading, setLoading, authors } = useContext(AppContext);
+  const { loading, authors, isFollowing } = useContext(AppContext);
 
+    if (loading) {
+      return (
+        <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20">
+          <Loader />
+        </div>
+      );
+    }
   return (
     <section className=" py-40 sm:py-32 px-32 flex flex-col items-start space-y-10">
       <div>
@@ -18,6 +26,9 @@ export default function Author() {
               <h3 className=" font-md text-base sm:text-lg">
                 {author.name}
               </h3>
+              <button>
+                {isFollowing? "Following": "Follow"}
+              </button>
             </div>
           )
         })}

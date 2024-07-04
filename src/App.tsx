@@ -1,5 +1,10 @@
-import { useEffect, useState } from "react";
-import { Route, BrowserRouter as Router, Routes, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import {
+  Route,
+  BrowserRouter as Router,
+  Routes,
+  useParams,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import Navbar from "./Navbar";
 import CreatePost from "./pages/CreatePost";
@@ -20,11 +25,13 @@ import {
 } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import Loader from "./loader/Loader";
-import { Authors } from "./types/types";
+import { Authors, UserProfileProps } from "./types/types";
 import Author from "./pages/Author";
 import Stories from "./pages/Stories";
 import Footer from "./components/Footer";
 import PostDetail from "./pages/PostDetail";
+import MyPosts from "./pages/MyPosts";
+import { followUser, unfollowUser } from "./reusables/followUnfollow";
 
 interface Post {
   id: string;
@@ -38,6 +45,8 @@ interface Post {
   imageUrl: string;
   createdAt: Date;
   niche: string;
+  currentUserId: string;
+  targetUserId: string;
 }
 export default function App() {
   const [isAuth, setIsAuth] = useLocalStorageBoolean("isAuth", false);
@@ -47,6 +56,7 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
   const [postDetail, setPostDetail] = useState<Post | null>(null);
   const { postId } = useParams<{ postId: string }>();
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
   const maxLength = 10;
 
@@ -131,28 +141,26 @@ export default function App() {
     };
 
     fetchPosts();
-  }, []);
+  }, [3000]);
 
+  //FETCH POST WHICH IS CLICKED ON
+  useEffect(() => {
+    console.log("POST ID:", postId);
+    const fetchPost = async () => {
+      if (postId) {
+        const postDetailDocRef = doc(db, "posts", postId);
+        const postDoc = await getDoc(postDetailDocRef);
 
-    //FETCH POST WHICH IS CLICKED ON
-    useEffect(() => {
-      console.log("POST ID:", postId);
-      const fetchPost = async () => {
-        if (postId) {
-          const postDetailDocRef = doc(db, "posts", postId);
-          const postDoc = await getDoc(postDetailDocRef);
-
-          if (postDoc.exists()) {
-            setPostDetail({ id: postDoc.id, ...postDoc.data() } as Post);
-          } else {
-            console.log("no such document boss");
-            
-          }
+        if (postDoc.exists()) {
+          setPostDetail({ id: postDoc.id, ...postDoc.data() } as Post);
+        } else {
+          console.log("no such document boss");
         }
-      };
-      fetchPost();
-      console.log(postDetail)
-    }, [postId]);
+      }
+    };
+    fetchPost();
+    console.log(postDetail);
+  }, [postId]);
 
   const deletePost = async (postId: string, imageUrl: string) => {
     try {
@@ -172,13 +180,47 @@ export default function App() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20">
-        <Loader />
-      </div>
-    );
-  }
+  const UserProfile: React.FC<UserProfileProps> = ({
+    currentUserId,
+    targetUserId,
+  }) => {
+    useEffect(() => {
+      const checkFollowingStatus = async () => {
+        const currentUserRef = doc(db, "users", currentUserId);
+        const currentUserDoc = await getDoc(currentUserRef);
+
+        if (currentUserDoc.exists()) {
+          const currentUserData = currentUserDoc.data();
+          setIsFollowing(
+            currentUserData?.following?.includes(targetUserId) || false
+          );
+        }
+      };
+
+      checkFollowingStatus();
+    }, [currentUserId, targetUserId]);
+  };
+
+  const handleFollow = async ({currentUserId, targetUserId}: UserProfileProps) => {
+    await followUser(currentUserId, targetUserId);
+    setIsFollowing(true);
+  };
+
+    const handleUnFollow = async ({
+      currentUserId,
+      targetUserId,
+    }: UserProfileProps) => {
+      await unfollowUser(currentUserId, targetUserId);
+      setIsFollowing(false);
+    };
+
+  // if (loading) {
+  //   return (
+  //     <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20">
+  //       <Loader />
+  //     </div>
+  //   );
+  // }
   return (
     <AppContext.Provider
       value={{
@@ -192,7 +234,8 @@ export default function App() {
         loading,
         setLoading,
         postDetail,
-        setPostDetail
+        setPostDetail,
+        isFollowing
       }}
     >
       <main className=" bg-white text-black h-max">
@@ -202,8 +245,12 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/posts" element={<Stories />} />
-            <Route path="/post/:postId" element={<PostDetail postDetail= {postDetail} />} />
+            <Route
+              path="/post/:postId"
+              element={<PostDetail postDetail={postDetail} />}
+            />
             <Route path="/authors" element={<Author />} />
+            <Route path="/userposts" element={<MyPosts />} />
             <Route
               path="/LOGIN"
               element={<Login signInWithGoogle={signInWithGoogle} />}

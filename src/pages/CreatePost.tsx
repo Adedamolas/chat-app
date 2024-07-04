@@ -11,9 +11,15 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import Loader from "../loader/Loader";
+import { AppContext } from "../helpers/Context";
+import { RiInformation2Line, RiInformationLine } from "@remixicon/react";
+import Info from "../reusables/Info";
 
 export default function CreatePost() {
   const navigate = useNavigate();
+
+  const {isAuth} = useContext(AppContext)
+
   const [title, setTitle] = useState("");
   const [postText, setPostText] = useState("");
   const [imageUpload, setImageUpload] = useState<File | null>(null);
@@ -86,18 +92,27 @@ export default function CreatePost() {
     }
   };
 
+  if (!isAuth) {
+    navigate("/login")
+  }
+
+
   if (loading) {
     return (
       <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20">
-        Creating Post....
-        <Loader />
+        <img
+          src="https://tenor.com/view/kakaotalk-ompangie-emoticon-pentol-writing-gif-18260388"
+          alt="gif"
+        />
+        Creating Post.... {progress}
+        {/* <Loader /> */}
       </div>
     );
   }
   return (
-    <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center py-36 sm:py-20 items-center">
-      <h3>Create-Post</h3>
-      <div className=" flex flex-col gap-5 items-start text-start justify-center place-items-center pl-16">
+    <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center py-48 sm:py-32 items-center">
+      <h3 className=" font-bold md:w-fit w-[%]"> Create your un-filtered post. </h3>
+      <form onSubmit= {createPost} className=" flex flex-col gap-5 items-start text-start justify-center place-items-center pl-16">
         <label htmlFor="Title">Title</label>
         <input
           required
@@ -105,16 +120,19 @@ export default function CreatePost() {
           type="text"
           onChange={(event) => setTitle(event.target.value)}
         />
+        <Info text="Make it a good one" />
         <label htmlFor="post">Text</label>
         <textarea
           required
           placeholder="Type in text"
           onChange={(event) => setPostText(event.target.value)}
         />
+        <Info text="Must not exceed 1000 words... or something" />
         <label htmlFor="Niche">Niche</label>
-        <div className=" flex flex-col gap-5 bg-black p-2 rounded-lg">
+        <div className=" flex flex-col gap-5 bg-transparent p-2 rounded-lg">
           <select
             value={niche}
+            required
             onChange={(e) => setNiche(e.target.value)}
             className=" px-2 py-2 border-black border-2 rounded-md"
           >
@@ -135,11 +153,12 @@ export default function CreatePost() {
             placeholder="Drop files here"
             onChange={handleFileChange}
           />
+          <Info text="Ensure image is landscape for best experience" />
         </div>
         <button onClick={createPost} disabled={loading}>
           {uploading ? "Creating Post" : "Submit"}
         </button>
-      </div>
+      </form>
     </div>
   );
 }

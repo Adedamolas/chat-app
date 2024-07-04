@@ -17,3 +17,8 @@ export interface Authors {
   name: string;
   profile_img: string | null;
 }
+
+export interface UserProfileProps {
+  currentUserId: string;
+  targetUserId: string;
+}
