@@ -16,12 +16,17 @@ import useLocalStorageBoolean from "./helpers/useLocalStorageBoolean";
 import Register from "./pages/Register";
 import Posts from "./components/Posts";
 import {
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
   getDoc,
   getDocs,
+  query,
   Timestamp,
+  updateDoc,
+  where,
 } from "firebase/firestore";
 import { deleteObject, ref } from "firebase/storage";
 import Loader from "./loader/Loader";
@@ -32,6 +37,7 @@ import Footer from "./components/Footer";
 import PostDetail from "./pages/PostDetail";
 import MyPosts from "./pages/MyPosts";
 import { followUser, unfollowUser } from "./reusables/followUnfollow";
+import { FollowersList } from "./components/Follow";
 
 interface Post {
   id: string;
@@ -51,6 +57,7 @@ interface Post {
 export default function App() {
   const [isAuth, setIsAuth] = useLocalStorageBoolean("isAuth", false);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [randomPost, setRandomPost] = useState<Post | null>(null);
   const [authors, setAuthors] = useState<Authors[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -162,6 +169,33 @@ export default function App() {
     console.log(postDetail);
   }, [postId]);
 
+  useEffect(() => {
+    if (auth.currentUser) {
+      const fetchUserPosts = async () => {
+        const q = query(
+          collection(db, "posts"),
+          where("author.id", "==", auth.currentUser?.uid)
+        );
+        const querySnapshot = await getDocs(q);
+        const userPosts = querySnapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            title: data.title,
+            postText: data.postText,
+            author: data.author,
+            imageUrl: data.imageUrl,
+            createdAt: data.createdAt.toDate(),
+            niche: data.niche,
+          } as Post;
+        });
+        setUserPosts(userPosts);
+      };
+      fetchUserPosts();
+    }
+  }, [db]);
+
+  // const handleDelete
   const deletePost = async (postId: string, imageUrl: string) => {
     try {
       // Delete the post document from Firestore
@@ -180,39 +214,21 @@ export default function App() {
     }
   };
 
-  const UserProfile: React.FC<UserProfileProps> = ({
+   const handleFollow = async ({
     currentUserId,
     targetUserId,
-  }) => {
-    useEffect(() => {
-      const checkFollowingStatus = async () => {
-        const currentUserRef = doc(db, "users", currentUserId);
-        const currentUserDoc = await getDoc(currentUserRef);
-
-        if (currentUserDoc.exists()) {
-          const currentUserData = currentUserDoc.data();
-          setIsFollowing(
-            currentUserData?.following?.includes(targetUserId) || false
-          );
-        }
-      };
-
-      checkFollowingStatus();
-    }, [currentUserId, targetUserId]);
-  };
-
-  const handleFollow = async ({currentUserId, targetUserId}: UserProfileProps) => {
+  }: UserProfileProps) => {
     await followUser(currentUserId, targetUserId);
     setIsFollowing(true);
   };
 
-    const handleUnFollow = async ({
-      currentUserId,
-      targetUserId,
-    }: UserProfileProps) => {
-      await unfollowUser(currentUserId, targetUserId);
-      setIsFollowing(false);
-    };
+  const handleUnFollow = async ({
+    currentUserId,
+    targetUserId,
+  }: UserProfileProps) => {
+    await unfollowUser(currentUserId, targetUserId);
+    setIsFollowing(false);
+  };
 
   // if (loading) {
   //   return (
@@ -228,6 +244,7 @@ export default function App() {
         signUserOut,
         randomPost,
         posts,
+        userPosts,
         deletePost,
         maxLength,
         authors,
@@ -235,7 +252,7 @@ export default function App() {
         setLoading,
         postDetail,
         setPostDetail,
-        isFollowing
+        isFollowing,
       }}
     >
       <main className=" bg-white text-black h-max">
@@ -245,12 +262,10 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/create-post" element={<CreatePost />} />
             <Route path="/posts" element={<Stories />} />
-            <Route
-              path="/post/:postId"
-              element={<PostDetail postDetail={postDetail} />}
-            />
+            <Route path="/post/:postId" element={<PostDetail />} />
             <Route path="/authors" element={<Author />} />
             <Route path="/userposts" element={<MyPosts />} />
+            <Route path="/followers" element={<FollowersList />} />
             <Route
               path="/LOGIN"
               element={<Login signInWithGoogle={signInWithGoogle} />}

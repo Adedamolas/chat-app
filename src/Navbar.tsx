@@ -64,16 +64,15 @@ export default function Navbar({ isAuth, signUserOut }: Props) {
                 />
               </MenuButton>
               <MenuItems
-                anchor="bottom left"
+                anchor="bottom"
                 transition
                 className="dropdown -translate-x-12 [--anchor-gap:4px] sm:[--anchor-gap:8px] text-white px-2 py-3 rounded-lg z-50 mt-2 origin-top transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0"
               >
                 {links.map((link) => (
-                  <MenuItem
-                    key={link.href}
-                    className="block bg-transparent w-full px-4 rounded-lg data-[focus]:bg-gray-500 transition-all data-[focus]:border-white"
-                  >
-                    <a href={link.href}>{link.label}</a>
+                  <MenuItem key={link.href}>
+                    <span className="block bg-transparent w-full px-4 rounded-lg data-[focus]:bg-gray-500 transition-all data-[focus]:border-white">
+                      <a href={link.href}>{link.label}</a>
+                    </span>
                   </MenuItem>
                 ))}
               </MenuItems>
