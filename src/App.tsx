@@ -257,7 +257,7 @@ export default function App() {
     >
       <main className=" bg-white text-black h-max">
         <Navbar isAuth={isAuth} signUserOut={signUserOut} />
-        <Router>
+        {/* <Router> */}
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create-post" element={<CreatePost />} />
@@ -275,7 +275,7 @@ export default function App() {
               element={<Register signInWithGoogle={signInWithGoogle} />}
             />
           </Routes>
-        </Router>
+        {/* </Router> */}
         <Footer />
       </main>
     </AppContext.Provider>
