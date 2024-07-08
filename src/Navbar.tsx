@@ -1,6 +1,6 @@
-import { RiSearch2Line } from "@remixicon/react";
+  import { RiSearch2Line } from "@remixicon/react";
 import { auth } from "./firebase-config";
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 
 interface Props {
   isAuth: boolean;
@@ -11,26 +11,26 @@ export default function Navbar({ isAuth, signUserOut }: Props) {
     { href: "/userposts", label: "My Posts" },
     { href: "/explore", label: "Explore" },
     { href: "/followers", label: "My Followers" },
-    { href: "/license", label: "Settings" },
+    { href: "/settings", label: "Settings" },
   ];
 
   return (
     <nav className=" flex flex-col sm:flex-row sm:px-32 md-px-32 w-full justify-between items-center list-none py-3 text-xl px-5 fixed top-0 backdrop-blur-md z-10">
       <div className=" flex flex-col sm:flex-row gap-5 items-center text-sm sm:text-lg sm:items-baseline">
         <div className=" border-black border-solid border-2 py-2 p-1">
-          <h2 className=" font-extrabold translate-x-5 translate-y-2">Blogr</h2>
+          <h2 className=" font-extrabold translate-x-5 transl mate-y-2">Blogr</h2>
         </div>
         <ul className=" flex flex-row items-center justify-center">
           <a href={"/"} className=" p-3 rounded-full">
             <li>Home</li>
           </a>
-          <a href={"create-post"} className=" p-3 rounded-full">
+          <a href={"/create-post"} className=" p-3 rounded-full">
             <li>Create-Post</li>
           </a>
-          <a href={"posts"} className=" p-3 rounded-full">
+          <a href={"/posts"} className=" p-3 rounded-full">
             <li>Posts</li>
           </a>
-          <a href={"authors"} className=" p-3 rounded-full">
+          <a href={"/authors"} className=" p-3 rounded-full">
             <li>Authors</li>
           </a>
         </ul>
@@ -41,7 +41,7 @@ export default function Navbar({ isAuth, signUserOut }: Props) {
         </span>
         {!isAuth && (
           <>
-            <a href={"login"} className="rounded-full">
+            <a href={"/login"} className="rounded-full">
               <li>Login</li>
             </a>
           </>
@@ -66,10 +66,10 @@ export default function Navbar({ isAuth, signUserOut }: Props) {
               <MenuItems
                 anchor="bottom"
                 transition
-                className="dropdown -translate-x-12 [--anchor-gap:4px] sm:[--anchor-gap:8px] text-white px-2 py-3 rounded-lg z-50 mt-2 origin-top transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0"
+                className="dropdown cursor-pointer -translate-x-12 [--anchor-gap:4px] sm:[--anchor-gap:8px] text-white px-2 py-3 rounded-lg z-50 mt-2 origin-top transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0"
               >
                 {links.map((link) => (
-                  <MenuItem key={link.href}>
+                  <MenuItem key={link.href} >
                     <span className="block bg-transparent w-full px-4 rounded-lg data-[focus]:bg-gray-500 transition-all data-[focus]:border-white">
                       <a href={link.href}>{link.label}</a>
                     </span>

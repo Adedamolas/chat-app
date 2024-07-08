@@ -38,6 +38,7 @@ import PostDetail from "./pages/PostDetail";
 import MyPosts from "./pages/MyPosts";
 import { followUser, unfollowUser } from "./reusables/followUnfollow";
 import { FollowersList } from "./components/Follow";
+import Settings from "./pages/Settings";
 
 interface Post {
   id: string;
@@ -55,18 +56,35 @@ interface Post {
   targetUserId: string;
 }
 export default function App() {
+  // Auth for user
   const [isAuth, setIsAuth] = useLocalStorageBoolean("isAuth", false);
+
+  // Posts array
   const [posts, setPosts] = useState<Post[]>([]);
+
+  // State for user posts
   const [userPosts, setUserPosts] = useState<Post[]>([]);
+
+  // State for the post on the header
   const [randomPost, setRandomPost] = useState<Post | null>(null);
+
+  // State for the existing authors
   const [authors, setAuthors] = useState<Authors[]>([]);
+
+  // Loading state for loading for preloader
   const [loading, setLoading] = useState<boolean>(true);
+
   const [postDetail, setPostDetail] = useState<Post | null>(null);
+
   const { postId } = useParams<{ postId: string }>();
+
+  // State for following users
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
 
+  // variable for the maxLength for the post titles
   const maxLength = 10;
 
+  // Function for signing users out
   const signUserOut = () => {
     signOut(auth).then(() => {
       localStorage.clear();
@@ -74,8 +92,9 @@ export default function App() {
       window.location.pathname = "/login";
     });
   };
-  console.log(isAuth);
+  // console.log(isAuth);
 
+  // Function for signing users in with Google popup
   const signInWithGoogle = () => {
     signInWithPopup(auth, provider).then((result) => {
       localStorage.setItem("isAuth", JSON.stringify(true));
@@ -84,6 +103,7 @@ export default function App() {
       window.location.pathname = "/";
     });
   };
+  
   useEffect(() => {
     if (posts.length > 0) {
       const randomIndex = Math.floor(Math.random() * posts.length);
@@ -169,8 +189,9 @@ export default function App() {
     console.log(postDetail);
   }, [postId]);
 
+  // For fetching user posts
   useEffect(() => {
-    if (auth.currentUser) {
+    // if (auth.currentUser) {
       const fetchUserPosts = async () => {
         const q = query(
           collection(db, "posts"),
@@ -192,7 +213,7 @@ export default function App() {
         setUserPosts(userPosts);
       };
       fetchUserPosts();
-    }
+    // }
   }, [db]);
 
   // const handleDelete
@@ -266,8 +287,9 @@ export default function App() {
             <Route path="/authors" element={<Author />} />
             <Route path="/userposts" element={<MyPosts />} />
             <Route path="/followers" element={<FollowersList />} />
+            <Route path="/settings" element={<Settings />} />
             <Route
-              path="/LOGIN"
+              path="/login"
               element={<Login signInWithGoogle={signInWithGoogle} />}
             />
             <Route
