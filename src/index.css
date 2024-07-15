@@ -35,6 +35,7 @@
     outline-offset: 2px;
     background-color: rgb(31 41 55 / var(--tw-bg-opacity));
     border-radius: 0.5rem;
+    background: #1f2937;
   }
   button, select:hover {
     /* background: rgb(0, 0, 0); */

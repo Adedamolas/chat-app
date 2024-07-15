@@ -7,12 +7,10 @@ const followUser = async (currentUserId: string, targetUserId: string) => {
     const currentUserRef = doc(db, "users", currentUserId);
     const targetUserRef = doc(db, "users", targetUserId);
 
-    // Add target user to the current user's following list
     await updateDoc(currentUserRef, {
       following: arrayUnion(targetUserId),
     });
 
-    // Add current user to the target user's followers list
     await updateDoc(targetUserRef, {
       followers: arrayUnion(currentUserId),
     });
@@ -26,12 +24,10 @@ const unfollowUser = async (currentUserId: string, targetUserId: string) => {
     const currentUserRef = doc(db, "users", currentUserId);
     const targetUserRef = doc(db, "users", targetUserId);
 
-    // Remove target user from the current user's following list
     await updateDoc(currentUserRef, {
       following: arrayRemove(targetUserId),
     });
 
-    // Remove current user from the target user's followers list
     await updateDoc(targetUserRef, {
       followers: arrayRemove(currentUserId),
     });

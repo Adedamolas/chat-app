@@ -14,6 +14,7 @@ import Loader from "../loader/Loader";
 import { AppContext } from "../helpers/Context";
 import { RiInformation2Line, RiInformationLine } from "@remixicon/react";
 import Info from "../reusables/Info";
+import Spinner from "../loader/Spinner";
 
 export default function CreatePost() {
   const navigate = useNavigate();
@@ -41,6 +42,13 @@ export default function CreatePost() {
     if (!auth.currentUser) {
       console.error("No authenticated user found");
       return;
+    }
+    if (!title) {
+      return(
+        <>
+          <p>Write something first baba.</p>
+        </>
+      )
     }
     setLoading(true);
     let imageUrl = "";
@@ -84,28 +92,44 @@ export default function CreatePost() {
         },
         createdAt: new Date(),
         niche,
+        comments: [],
+        likes: [],
       });
       navigate("/");
       setLoading(true);
     } catch (error) {
       console.error("Error adding document:", error);
     }
+    finally{
+      setUploading(false);
+    }
   };
 
   if (!isAuth) {
     navigate("/login")
   }
-
+  // console.log(title)
 
   if (loading) {
     return (
-      <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20">
-        <img
-          src="https://tenor.com/view/kakaotalk-ompangie-emoticon-pentol-writing-gif-18260388"
+      <div className=" w-full h-full flex flex-col gap-3 align-middle justify-center place-items-center items-center py-28">
+        {/* <img
+          src="https://tenor.com/view/kakaotalk-ompangie-emoticon-pentol-writing-gif-18260388.gif"
           alt="gif"
+        /> */}
+        <img
+          className=" bg-black"
+          src="https://tenor.com/view/just-write-i-am-writing-must-write-tappity-tap-time-to-write-gif-1858595896619860480.gif"
+          alt=""
         />
-        Creating Post.... {progress}
-        {/* <Loader /> */}
+        <div className=" flex flex-row items-center gap-2">
+          <h3 className=" font-bold">Creating Post.... </h3>
+          <p className=" px-2 bg-gray-400 w-min h-min rounded-lg">{progress}</p>
+        </div>
+        <button className="" onClick={createPost} disabled={loading}>
+          {loading ? "Submitting Post" : "Submit"}
+          {/* <Spinner /> */}
+        </button>
       </div>
     );
   }

@@ -1,4 +1,10 @@
-import { arrayRemove, arrayUnion, doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../firebase-config";
 import { useEffect, useState } from "react";
 
@@ -14,6 +20,15 @@ export interface Post {
   imageUrl?: string;
   createdAt: Date;
   niche: string;
+  comments: [
+    {
+      userId: string;
+      userName: string;
+      comment: string;
+      createdAt: Date;
+    }
+  ];
+  likes: [string, string];
 }
 
 export interface Authors {
@@ -27,89 +42,92 @@ export interface UserProfileProps {
   targetUserId: string;
 }
 
-
- // Function to follow a user
-  export const followUser = async (
-    currentUserId: string,
-    targetUserId: string
-  ) => {
-    try {
-      const currentUserRef = doc(db, "users", currentUserId);
-      const targetUserRef = doc(db, "users", targetUserId);
-
-      // Add targetUserId to currentUser's following array
-      await updateDoc(currentUserRef, {
-        following: arrayUnion(targetUserId),
-      });
-
-      // Add currentUserId to targetUser's followers array
-      await updateDoc(targetUserRef, {
-        followers: arrayUnion(currentUserId),
-      });
-    } catch (error) {
-      console.error("Error following user: ", error);
-    }
-  };
-
-  // Function to unfollow a user
-  export const unfollowUser = async (
-    currentUserId: string,
-    targetUserId: string
-  ) => {
-    try {
-      const currentUserRef = doc(db, "users", currentUserId);
-      const targetUserRef = doc(db, "users", targetUserId);
-
-      // Remove targetUserId from currentUser's following array
-      await updateDoc(currentUserRef, {
-        following: arrayRemove(targetUserId),
-      });
-
-      // Remove currentUserId from targetUser's followers array
-      await updateDoc(targetUserRef, {
-        followers: arrayRemove(currentUserId),
-      });
-    } catch (error) {
-      console.error("Error unfollowing user: ", error);
-    }
-  };
+export interface CommentsAndLikesProps {
+  post: Post;
+  handleAddComment: (postId: string, commentText: string) => void;
+}
 
 
+// Function to follow a user
+export const followUser = async (
+  currentUserId: string,
+  targetUserId: string
+) => {
+  try {
+    const currentUserRef = doc(db, "users", currentUserId);
+    const targetUserRef = doc(db, "users", targetUserId);
 
-  export const useFollowers = (userId: string) => {
-    const [followers, setFollowers] = useState<string[]>([]);
+    // Add targetUserId to currentUser's following array
+    await updateDoc(currentUserRef, {
+      following: arrayUnion(targetUserId),
+    });
 
-    useEffect(() => {
-      const fetchFollowers = async () => {
-        const userDocRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userDocRef);
+    // Add currentUserId to targetUser's followers array
+    await updateDoc(targetUserRef, {
+      followers: arrayUnion(currentUserId),
+    });
+  } catch (error) {
+    console.error("Error following user: ", error);
+  }
+};
 
-        if (userDoc.exists()) {
-          setFollowers(userDoc.data().followers || []);
-        }
-      };
+// Function to unfollow a user
+export const unfollowUser = async (
+  currentUserId: string,
+  targetUserId: string
+) => {
+  try {
+    const currentUserRef = doc(db, "users", currentUserId);
+    const targetUserRef = doc(db, "users", targetUserId);
 
-      fetchFollowers();
-    }, [userId]);
+    // Remove targetUserId from currentUser's following array
+    await updateDoc(currentUserRef, {
+      following: arrayRemove(targetUserId),
+    });
 
-    return followers;
-  };
+    // Remove currentUserId from targetUser's followers array
+    await updateDoc(targetUserRef, {
+      followers: arrayRemove(currentUserId),
+    });
+  } catch (error) {
+    console.error("Error unfollowing user: ", error);
+  }
+};
 
-  export const useFollowing = (userId: string) => {
-    const [following, setFollowing] = useState<string[]>([]);
+export const useFollowers = (userId: string) => {
+  const [followers, setFollowers] = useState<string[]>([]);
 
-    useEffect(() => {
-      const fetchFollowing = async () => {
-        const userDocRef = doc(db, "users", userId);
-        const userDoc = await getDoc(userDocRef);
+  useEffect(() => {
+    const fetchFollowers = async () => {
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userDocRef);
 
-        if (userDoc.exists()) {
-          setFollowing(userDoc.data().following || []);
-        }
-      };
+      if (userDoc.exists()) {
+        setFollowers(userDoc.data().followers || []);
+      }
+    };
 
-      fetchFollowing();
-    }, [userId]);
+    fetchFollowers();
+  }, [userId]);
 
-    return following;
-  };
+  return followers;
+};
+
+export const useFollowing = (userId: string) => {
+  const [following, setFollowing] = useState<string[]>([]);
+
+  useEffect(() => {
+    const fetchFollowing = async () => {
+      const userDocRef = doc(db, "users", userId);
+      const userDoc = await getDoc(userDocRef);
+
+      if (userDoc.exists()) {
+        setFollowing(userDoc.data().following || []);
+      }
+    };
+
+    fetchFollowing();
+  }, [userId]);
+
+  return following;
+};

@@ -20,6 +20,8 @@ import Posts from "../components/Posts";
 // Reusables
 import { AppContext } from "../helpers/Context";
 import Advert from "../components/Advert";
+import NichePosts from "./NichePosts";
+import Niche from "../components/Niche";
 
 interface Post {
   id: string;
@@ -49,6 +51,12 @@ export default function Home() {
     <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20 pt-52 sm:pt-0 space-y-10">
       <>
         <Header randomPost={randomPost} />
+      </>
+      <>
+        <Advert title="Advertisment" content="You can place ads here" />
+      </>
+      <>
+        <Niche />
       </>
       <>
         <Advert title="Advertisment" content="You can place ads here" />

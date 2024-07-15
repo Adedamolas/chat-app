@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Route,
   BrowserRouter as Router,
@@ -39,6 +39,7 @@ import MyPosts from "./pages/MyPosts";
 import { followUser, unfollowUser } from "./reusables/followUnfollow";
 import { FollowersList } from "./components/Follow";
 import Settings from "./pages/Settings";
+import NichePosts from "./pages/NichePosts";
 
 interface Post {
   id: string;
@@ -49,11 +50,18 @@ interface Post {
     id: string;
     profile_image: string | null;
   };
-  imageUrl: string;
+  imageUrl?: string;
   createdAt: Date;
   niche: string;
-  currentUserId: string;
-  targetUserId: string;
+  comments: [
+    {
+      userId: string;
+      userName: string;
+      comment: string;
+      createdAt: Date;
+    }
+  ];
+  likes: [string, string];
 }
 export default function App() {
   // Auth for user
@@ -74,12 +82,18 @@ export default function App() {
   // Loading state for loading for preloader
   const [loading, setLoading] = useState<boolean>(true);
 
+  // State for the post-detail
   const [postDetail, setPostDetail] = useState<Post | null>(null);
 
   const { postId } = useParams<{ postId: string }>();
 
   // State for following users
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
+
+  // State for storing the theme
+  const [theme, setTheme] = useState<boolean>(false);
+
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
   // variable for the maxLength for the post titles
   const maxLength = 10;
@@ -103,7 +117,7 @@ export default function App() {
       window.location.pathname = "/";
     });
   };
-  
+
   useEffect(() => {
     if (posts.length > 0) {
       const randomIndex = Math.floor(Math.random() * posts.length);
@@ -111,18 +125,28 @@ export default function App() {
     }
   }, [posts]);
 
+  // State fo fetching all published posts
   useEffect(() => {
     const fetchPosts = async () => {
       const postsCollectionRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsCollectionRef);
       const postsList = postsSnapshot.docs.map((doc) => {
         const data = doc.data();
+        const comments = (data.comments || []).map((comment: any) => ({
+          ...comment,
+          createdAt:
+            comment.createdAt instanceof Timestamp
+              ? comment.createdAt.toDate()
+              : comment.createdAt,
+        }));
         return {
           id: doc.id,
           ...data,
-          createdAt: (data.createdAt as Timestamp).toDate(), // Convert Firestore Timestamp to JavaScript Date
+          createdAt: (data.createdAt as Timestamp).toDate(),
+          comments,
+          likes: data.likes || [], // Convert Firestore Timestamp to JavaScript Date
         };
-      }) as Post[];
+      }) as unknown as Post[];
       setPosts(postsList);
       setLoading(false);
     };
@@ -130,6 +154,31 @@ export default function App() {
     fetchPosts();
   }, []);
 
+  // For fetching user posts
+  useEffect(() => {
+    // if (auth.currentUser) {
+    const fetchUserPosts = async () => {
+      const q = query(
+        collection(db, "posts"),
+        where("author.id", "==", auth.currentUser?.uid)
+      );
+      const querySnapshot = await getDocs(q);
+      const userPosts = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: (data.createdAt as Timestamp).toDate(),
+        };
+      }) as Post[];
+      setUserPosts(userPosts);
+      setLoading(false);
+    };
+
+    fetchUserPosts();
+  }, [db]);
+
+  // FUNCTION FOR FETCHING THE LIST OF AUTHORS
   useEffect(() => {
     const fetchPosts = async () => {
       try {
@@ -189,33 +238,6 @@ export default function App() {
     console.log(postDetail);
   }, [postId]);
 
-  // For fetching user posts
-  useEffect(() => {
-    // if (auth.currentUser) {
-      const fetchUserPosts = async () => {
-        const q = query(
-          collection(db, "posts"),
-          where("author.id", "==", auth.currentUser?.uid)
-        );
-        const querySnapshot = await getDocs(q);
-        const userPosts = querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.title,
-            postText: data.postText,
-            author: data.author,
-            imageUrl: data.imageUrl,
-            createdAt: data.createdAt.toDate(),
-            niche: data.niche,
-          } as Post;
-        });
-        setUserPosts(userPosts);
-      };
-      fetchUserPosts();
-    // }
-  }, [db]);
-
   // const handleDelete
   const deletePost = async (postId: string, imageUrl: string) => {
     try {
@@ -235,7 +257,35 @@ export default function App() {
     }
   };
 
-   const handleFollow = async ({
+  const handleLike = async (postId: string) => {
+    const postRef = doc(db, "posts", postId);
+    await updateDoc(postRef, {
+      likes: arrayUnion(auth.currentUser?.uid),
+    });
+  };
+
+  const handleAddComment = async (postId: string, commentText: string) => {
+    const postRef = doc(db, "posts", postId);
+    const newComment = {
+      profileImage: auth.currentUser?.photoURL || "",
+      userId: auth.currentUser?.uid || "",
+      userName: auth.currentUser?.displayName || "Anonymous",
+      comment: commentText,
+      createdAt: new Date(),
+    };
+    await updateDoc(postRef, {
+      comments: arrayUnion(newComment),
+    });
+  };
+
+  const openModal = (post: Post) => {
+    setSelectedPost(post);
+  };
+
+  const closeModal = () => {
+    setSelectedPost(null);
+  };
+  const handleFollow = async ({
     currentUserId,
     targetUserId,
   }: UserProfileProps) => {
@@ -274,6 +324,14 @@ export default function App() {
         postDetail,
         setPostDetail,
         isFollowing,
+        theme,
+        setTheme,
+        openModal,
+        closeModal,
+        selectedPost,
+        setSelectedPost,
+        handleAddComment,
+        handleLike,
       }}
     >
       <main className=" bg-white text-black h-max">
@@ -288,6 +346,7 @@ export default function App() {
             <Route path="/userposts" element={<MyPosts />} />
             <Route path="/followers" element={<FollowersList />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/niche/:niche" element={<NichePosts />} />{" "}
             <Route
               path="/login"
               element={<Login signInWithGoogle={signInWithGoogle} />}
