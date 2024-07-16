@@ -1,4 +1,11 @@
-import { RiChat3Fill, RiChat3Line, RiCloseLargeLine, RiDeleteBin2Line, RiHeart3Fill, RiHeart3Line } from "@remixicon/react";
+import {
+  RiChat3Fill,
+  RiChat3Line,
+  RiCloseLargeLine,
+  RiDeleteBin2Line,
+  RiHeart3Fill,
+  RiHeart3Line,
+} from "@remixicon/react";
 import TruncatedText from "../reusables/TruncateText";
 import { Post } from "../types/types";
 import { auth } from "../firebase-config";
@@ -6,7 +13,7 @@ import CapitalizeWords from "../reusables/CapitalizeWords";
 import { useContext } from "react";
 import { AppContext } from "../helpers/Context";
 import { Link } from "react-router-dom";
-import Modal from "react-modal"
+import Modal from "react-modal";
 import { CommentsAndLikes } from "./CommentsAndLikes";
 
 interface CommentsAndLikesProps {
@@ -14,7 +21,7 @@ interface CommentsAndLikesProps {
   handleAddComment: (postId: string, commentText: string) => void;
 }
 
-export default function  Posts({handleAddComment}: CommentsAndLikesProps ) {
+export default function Posts({ handleAddComment }: CommentsAndLikesProps) {
   const { posts, closeModal, selectedPost, handleLike, openModal } =
     useContext(AppContext);
   const maxLength = 18;
@@ -53,13 +60,11 @@ export default function  Posts({handleAddComment}: CommentsAndLikesProps ) {
                   </span>
                   <p>{post.likes.length}</p>
                 </div>
-                <div className=" flex flex-row">
+                <div onClick={() => openModal(post)} className=" flex flex-row">
                   <span>
                     <RiChat3Fill />
                   </span>
-                  <p className=" flex flex-row" onClick={() => openModal(post)}>
-                    {post.comments.length}
-                  </p>
+                  <p className=" flex flex-row">{post.comments.length}</p>
                 </div>
               </div>
             </div>
@@ -78,7 +83,10 @@ export default function  Posts({handleAddComment}: CommentsAndLikesProps ) {
         >
           <div className=" flex flex-row items-center justify-between">
             <h2>{selectedPost.title}</h2>
-            <span onClick={closeModal}> <RiCloseLargeLine className=" text-black" /> </span>
+            <span onClick={closeModal}>
+              {" "}
+              <RiCloseLargeLine className=" text-black cursor-pointer" />{" "}
+            </span>
           </div>
           <CommentsAndLikes
             post={selectedPost}

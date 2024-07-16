@@ -18,11 +18,28 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
       <h3>Comments:</h3>
       <div className=" grid grid-cols-1 gap-3 h-56 overflow-scroll">
         {post.comments.map((comment, index) => (
-          <div key={index} className=" bg-gray-200 w-fit p-3 rounded-xl text-sm">
-            <p className=" font-bold"> 
+          <div
+            key={index}
+            className=" bg-gray-200 w-fit p-3 rounded-xl text-sm"
+          >
+            {comment.profileImage && (
+              <img
+                src={comment.profileImage}
+                alt={`${comment.userName}'s profile`}
+                style={{
+                  width: "40px",
+                  height: "40px",
+                  borderRadius: "50%",
+                  marginRight: "10px",
+                }}
+              />
+            )}
+            <p className=" font-bold">
               {comment.userName}: {comment.comment}
             </p>
-            <p className=" text-gray-600">Posted on: {comment.createdAt.toDateString()}</p>
+            <p className=" text-gray-600">
+              Posted on: {comment.createdAt.toDateString()}
+            </p>
           </div>
         ))}
       </div>
@@ -34,7 +51,9 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
           onChange={(e) => setCommentText(e.target.value)}
           placeholder="Add a comment"
         />
-        <button type="submit" className=" bg-gray-500">Submit</button>
+        <button type="submit" className=" bg-gray-500">
+          Submit
+        </button>
       </form>
       <p className=" py-2 font-semibold">Total Likes: {post.likes.length}</p>
     </div>

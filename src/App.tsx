@@ -267,7 +267,6 @@ export default function App() {
   const handleAddComment = async (postId: string, commentText: string) => {
     const postRef = doc(db, "posts", postId);
     const newComment = {
-      profileImage: auth.currentUser?.photoURL || "",
       userId: auth.currentUser?.uid || "",
       userName: auth.currentUser?.displayName || "Anonymous",
       comment: commentText,
@@ -331,7 +330,6 @@ export default function App() {
         selectedPost,
         setSelectedPost,
         handleAddComment,
-        handleLike,
       }}
     >
       <main className=" bg-white text-black h-max">
@@ -340,7 +338,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/create-post" element={<CreatePost />} />
-            <Route path="/posts" element={<Stories />} />
+            {/* <Route path="/posts" element={<Stories />} /> */}
             <Route path="/post/:postId" element={<PostDetail />} />
             <Route path="/authors" element={<Author />} />
             <Route path="/userposts" element={<MyPosts />} />

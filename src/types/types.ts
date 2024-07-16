@@ -22,6 +22,7 @@ export interface Post {
   niche: string;
   comments: [
     {
+      profileImage: any;
       userId: string;
       userName: string;
       comment: string;
