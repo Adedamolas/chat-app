@@ -1,5 +1,7 @@
 import {
   RiMenu2Line,
+  RiMore2Fill,
+  RiMore2Line,
   RiNotification2Line,
   RiSearch2Line,
 } from "@remixicon/react";
@@ -91,7 +93,7 @@ export default function Navbar({ isAuth, signUserOut }: Props) {
             </Menu>
           </>
         )}
-        <RiMenu2Line />
+        <RiMore2Fill />
       </div>
     </nav>
   );

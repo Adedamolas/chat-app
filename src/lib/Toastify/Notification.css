@@ -1,0 +1,19 @@
+/* @notification-error>div.Toastify_toast-body {
+    font-weight: 500;
+    color: rgb(237, 25, 25) !important
+}
+
+@notification-warn>div.Toastify_toast-body {
+    font-weight: 500;
+    color: #fbcf00 !important
+}
+
+@notification-info>div.Toastify_toast-body {
+    font-weight: 500;
+    color: #fff !important
+}
+
+@notification-error>div.Toastify_toast-body {
+    font-weight: 500;
+    color: #0dce0d !important
+} */

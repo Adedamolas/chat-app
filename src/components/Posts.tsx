@@ -21,11 +21,12 @@ interface CommentsAndLikesProps {
   handleAddComment: (postId: string, commentText: string) => void;
 }
 
-export default function Posts({ handleAddComment }: CommentsAndLikesProps) {
-  const { posts, closeModal, selectedPost, handleLike, openModal } =
+export default function Posts() {
+  const { posts, closeModal, selectedPost,handleAddComment, handleDeleteComment, handleLike, openModal } =
     useContext(AppContext);
   const maxLength = 18;
 
+  
   return (
     <div className="grid flex-col gap-x-5 grid-cols-1 md:grid-cols-4 w-full justify-center place-items-center align-middle items-center px-10">
       {posts.map((post: Post) => {
@@ -56,7 +57,11 @@ export default function Posts({ handleAddComment }: CommentsAndLikesProps) {
               <div className=" flex flex-row gap-2 p-1 bg-gray-200 rounded-lg">
                 <div className=" flex flex-row">
                   <span onClick={() => handleLike(post.id)}>
-                    <RiHeart3Fill className=" text-red-500" />
+                    {post.likes.includes(auth.currentUser?.uid || "") ? (
+                      <RiHeart3Fill className=" text-red-500" />
+                    ) : (
+                      <RiHeart3Line />
+                    )}
                   </span>
                   <p>{post.likes.length}</p>
                 </div>
@@ -78,7 +83,7 @@ export default function Posts({ handleAddComment }: CommentsAndLikesProps) {
           isOpen={true}
           onRequestClose={closeModal}
           className={
-            " flex flex-col w-1/2 backdrop-blur-xl mt-24 mx-auto p-8 rounded-xl border-white gap-3"
+            " flex flex-col bg-gray-200 w-1/2 backdrop-blur-xl mt-24 mx-auto p-8 rounded-xl border-white gap-3"
           }
         >
           <div className=" flex flex-row items-center justify-between">
@@ -91,6 +96,7 @@ export default function Posts({ handleAddComment }: CommentsAndLikesProps) {
           <CommentsAndLikes
             post={selectedPost}
             handleAddComment={handleAddComment}
+            handleDeleteComment={handleDeleteComment}
           />
         </Modal>
       )}

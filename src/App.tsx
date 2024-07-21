@@ -23,6 +23,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   Timestamp,
   updateDoc,
@@ -61,7 +62,7 @@ interface Post {
       createdAt: Date;
     }
   ];
-  likes: [string, string];
+  likes: string[];
 }
 export default function App() {
   // Auth for user
@@ -95,6 +96,9 @@ export default function App() {
 
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
 
+  const [submitting, setSubmitting] = useState<boolean>(false);
+
+  const [isPostDeleted, setIsPostDeleted] = useState<boolean>(false)
   // variable for the maxLength for the post titles
   const maxLength = 10;
 
@@ -127,10 +131,10 @@ export default function App() {
 
   // State fo fetching all published posts
   useEffect(() => {
-    const fetchPosts = async () => {
-      const postsCollectionRef = collection(db, "posts");
-      const postsSnapshot = await getDocs(postsCollectionRef);
-      const postsList = postsSnapshot.docs.map((doc) => {
+    const postsCollectionRef = collection(db, "posts");
+
+    const unsubscribe = onSnapshot(postsCollectionRef, (snapshot) => {
+      const postsList = snapshot.docs.map((doc) => {
         const data = doc.data();
         const comments = (data.comments || []).map((comment: any) => ({
           ...comment,
@@ -144,15 +148,34 @@ export default function App() {
           ...data,
           createdAt: (data.createdAt as Timestamp).toDate(),
           comments,
-          likes: data.likes || [], // Convert Firestore Timestamp to JavaScript Date
+          likes: data.likes || [],
         };
       }) as unknown as Post[];
+
       setPosts(postsList);
       setLoading(false);
-    };
+    });
 
-    fetchPosts();
+    // Clean up the subscription
+    return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (postId) {
+      const postDetailDocRef = doc(db, "posts", postId);
+
+      const unsubscribe = onSnapshot(postDetailDocRef, (doc) => {
+        if (doc.exists()) {
+          setPostDetail({ id: doc.id, ...doc.data() } as Post);
+        } else {
+          console.log("No such document!");
+        }
+      });
+
+      // Clean up the subscription
+      return () => unsubscribe();
+    }
+  }, [postId]);
 
   // For fetching user posts
   useEffect(() => {
@@ -258,23 +281,70 @@ export default function App() {
   };
 
   const handleLike = async (postId: string) => {
+    const userId = auth.currentUser?.uid;
+
+    if (!userId) return;
+
     const postRef = doc(db, "posts", postId);
-    await updateDoc(postRef, {
-      likes: arrayUnion(auth.currentUser?.uid),
-    });
+    const postDoc = await getDoc(postRef);
+
+    if (postDoc.exists()) {
+      const postData = postDoc.data();
+      const likes = postData.likes || [];
+
+      if (likes.includes(userId)) {
+        await updateDoc(postRef, {
+          likes: arrayRemove(userId),
+        });
+      } else {
+        await updateDoc(postRef, {
+          likes: arrayUnion(userId),
+        });
+      }
+    }
   };
 
   const handleAddComment = async (postId: string, commentText: string) => {
+    if (!auth.currentUser) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    setSubmitting(true);
     const postRef = doc(db, "posts", postId);
     const newComment = {
       userId: auth.currentUser?.uid || "",
       userName: auth.currentUser?.displayName || "Anonymous",
+      profileImage: auth.currentUser?.photoURL || "",
       comment: commentText,
       createdAt: new Date(),
     };
-    await updateDoc(postRef, {
-      comments: arrayUnion(newComment),
-    });
+    try {
+      await updateDoc(postRef, {
+        comments: arrayUnion(newComment),
+      });
+    } catch (error) {
+      console.error("Error adding comment: ", error);
+    }
+
+    setSubmitting(false);
+  };
+
+  const handleDeleteComment = async (postId: string, comment: any) => {
+    if (!auth.currentUser) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    const postRef = doc(db, "posts", postId);
+
+    try {
+      await updateDoc(postRef, {
+        comments: arrayRemove(comment),
+      });
+    } catch (error) {
+      console.log("Error deleting comment: ", error);
+    }
   };
 
   const openModal = (post: Post) => {
@@ -329,7 +399,12 @@ export default function App() {
         closeModal,
         selectedPost,
         setSelectedPost,
+        handleLike,
         handleAddComment,
+        handleDeleteComment,
+        submitting,
+        isPostDeleted,
+        setIsPostDeleted
       }}
     >
       <main className=" bg-white text-black h-max">

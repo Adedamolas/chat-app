@@ -29,7 +29,7 @@ export interface Post {
       createdAt: Date;
     }
   ];
-  likes: [string, string];
+  likes: string[];
 }
 
 export interface Authors {

@@ -1,10 +1,24 @@
-import { useState } from "react";
-import { CommentsAndLikesProps } from "../types/types";
+import { useContext, useState } from "react";
+// import { CommentsAndLikesProps } from "../types/types";
+import { AppContext } from "../helpers/Context";
+import Spinner from "../loader/Spinner";
+import { Post } from "../types/types";
+import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
+import { RiDeleteBinLine, RiMore2Fill, RiMore2Line } from "@remixicon/react";
+import { auth } from "../firebase-config";
 
+interface CommentsAndLikesProps {
+  post: Post;
+  handleAddComment: (postId: string, commentText: string) => void;
+  handleDeleteComment: (postId: string, comment: any) => void;
+}
 export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
   post,
   handleAddComment,
+  handleDeleteComment,
 }) => {
+  const { submitting } = useContext(AppContext);
+
   const [commentText, setCommentText] = useState<string>("");
 
   const submitComment = (e: React.FormEvent) => {
@@ -20,26 +34,32 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
         {post.comments.map((comment, index) => (
           <div
             key={index}
-            className=" bg-gray-200 w-fit p-3 rounded-xl text-sm"
+            className=" bg-gray-300 w-fit p-3 rounded-xl text-sm"
           >
-            {comment.profileImage && (
-              <img
-                src={comment.profileImage}
-                alt={`${comment.userName}'s profile`}
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "50%",
-                  marginRight: "10px",
-                }}
-              />
-            )}
-            <p className=" font-bold">
-              {comment.userName}: {comment.comment}
-            </p>
-            <p className=" text-gray-600">
-              Posted on: {comment.createdAt.toDateString()}
-            </p>
+            <div className=" flex flex-row items-center gap-2 px-2">
+              {comment.profileImage && (
+                <img
+                  src={comment.profileImage}
+                  alt={`${comment.userName}'s profile`}
+                  className=" w-8 rounded-full"
+                />
+              )}
+              <p>{comment.userName}</p>
+              <div>
+                {comment.userId === auth.currentUser?.uid && (
+                  <span onClick={() => handleDeleteComment(post.id, comment)}>
+                    <RiDeleteBinLine className=" cursor-pointer transition-all p-1 rounded-full hover:bg-gray-100" />
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className=" px-2">
+              <p className=" font-bold px-1">{comment.comment}</p>
+              <p className=" text-gray-600">
+                Posted on: {comment.createdAt.toDateString()}
+              </p>
+            </div>
           </div>
         ))}
       </div>
@@ -52,7 +72,14 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
           placeholder="Add a comment"
         />
         <button type="submit" className=" bg-gray-500">
-          Submit
+          {submitting ? (
+            <>
+              <Spinner />
+              Submitting
+            </>
+          ) : (
+            <>Submit</>
+          )}
         </button>
       </form>
       <p className=" py-2 font-semibold">Total Likes: {post.likes.length}</p>
