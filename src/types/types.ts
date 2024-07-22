@@ -8,27 +8,27 @@ import {
 import { db } from "../firebase-config";
 import { useEffect, useState } from "react";
 
+
+export interface Comment {
+  userId: string;
+  userName: string;
+  comment: string;
+  profileImage?: string;
+  createdAt: Date;
+}
+
 export interface Post {
   id: string;
   title: string;
   postText: string;
   author: {
-    name: string;
     id: string;
-    profile_image: string | null;
+    name: string;
   };
-  imageUrl?: string;
-  createdAt: Date;
+  imageUrl: string;
   niche: string;
-  comments: [
-    {
-      profileImage: any;
-      userId: string;
-      userName: string;
-      comment: string;
-      createdAt: Date;
-    }
-  ];
+  createdAt: string;
+  comments: Comment[];
   likes: string[];
 }
 
