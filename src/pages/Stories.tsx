@@ -23,8 +23,8 @@ interface CommentsAndLikesProps {
   handleAddComment: (postId: string, commentText: string) => void;
 }
 
-export default function Stories({handleAddComment}: CommentsAndLikesProps) {
-    const { posts, closeModal, selectedPost, handleLike, openModal, loading } =
+export default function Stories() {
+    const { posts, closeModal, selectedPost, handleLike, handleAddComment, handleDeleteComment ,openModal, loading } =
     useContext(AppContext);
   const maxLength = 18;
     if (loading) {
@@ -103,9 +103,11 @@ export default function Stories({handleAddComment}: CommentsAndLikesProps) {
           <CommentsAndLikes
             post={selectedPost}
             handleAddComment={handleAddComment}
+            handleDeleteComment={handleDeleteComment}
           />
         </Modal>
       )}
+      </div>
     </section>
   );
 }

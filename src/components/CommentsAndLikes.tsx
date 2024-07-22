@@ -36,7 +36,7 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
             key={index}
             className=" bg-gray-300 w-fit p-3 rounded-xl text-sm"
           >
-            <div className=" flex flex-row items-center gap-2 px-2">
+            <div className=" flex flex-row items-center justify-between gap-2 px-2">
               {comment.profileImage && (
                 <img
                   src={comment.profileImage}
@@ -71,8 +71,8 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
           onChange={(e) => setCommentText(e.target.value)}
           placeholder="Add a comment"
         />
-        <button type="submit" className=" bg-gray-500">
-          {submitting ? (
+        <button type="submit" className=" bg-gray-500 flex flex-row gap-2">
+          {submitting ? ( 
             <>
               <Spinner />
               Submitting
