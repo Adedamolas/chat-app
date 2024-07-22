@@ -31,7 +31,7 @@ export default function NichePosts(){
             id: doc.id,
             ...data,
             createdAt: (data.createdAt as Timestamp).toDate(),
-          } as Post;
+          } as unknown as Post;
         });
         setPosts(nichePosts);
         setLoading(false);

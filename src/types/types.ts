@@ -22,6 +22,7 @@ export interface Post {
   title: string;
   postText: string;
   author: {
+    profile_image: string;
     id: string;
     name: string;
   };
