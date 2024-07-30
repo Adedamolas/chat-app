@@ -51,7 +51,7 @@ export default function NichePosts(){
 
   return (
     <div className="container mx-auto py-28 px-28">
-      <h1 className="text-2xl font-bold mb-6">Posts in " {niche} " Niche</h1>
+      <h1 className="text-2xl font-bold mb-6">Posts in "{niche}" Niche</h1>
       {posts.length === 0 ? (
         <p>No posts found in this niche, you can publish posts under this niche if you can.</p>
       ) : (

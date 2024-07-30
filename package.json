@@ -13,10 +13,12 @@
     "@remixicon/react": "^4.2.0",
     "@types/prop-types": "^15.7.12",
     "firebase": "^10.12.0",
+    "framer-motion": "^11.3.8",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.23.0",
+    "react-toastify": "^10.0.5",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

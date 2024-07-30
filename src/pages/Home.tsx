@@ -22,22 +22,9 @@ import { AppContext } from "../helpers/Context";
 import Advert from "../components/Advert";
 import NichePosts from "./NichePosts";
 import Niche from "../components/Niche";
+import { Post } from "../types/types";
 
-interface Post {
-  id: string;
-  title: string;
-  postText: string;
-  author: {
-    name: string;
-    id: string;
-    profile_image: string | null;
-  };
-  imageUrl: string;
-  createdAt: Date;
-  niche: string;
-}
-
-export default function Home() {
+export default function Home()  {
   const { randomPost, loading } = useContext(AppContext);
   // const [loading, setLoading] = useState<boolean>(true);
   if (loading) {

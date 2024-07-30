@@ -23,13 +23,11 @@ export default function Navbar({ isAuth, signUserOut }: Props) {
 
   return (
     <nav className=" desktop_menu flex flex-col sm:flex-row sm:px-32 md-px-32 w-full justify-between items-center list-none py-3 text-xl px-5 fixed top-0 backdrop-blur-md z-10">
-      <div className=" flex flex-col sm:flex-row gap-5 items-center text-sm sm:text-lg sm:items-baseline">
+      <div className=" flex flex-row lg:flex-row gap-5 items-center text-sm sm:text-lg sm:items-baseline">
         <div className=" border-black border-solid border-2 py-2 p-1">
-          <h2 className=" font-extrabold translate-x-5 transl mate-y-2">
-            Blogr
-          </h2>
+          <h2 className=" font-extrabold translate-x-5 mate-y-2">Blogr</h2>
         </div>
-        <ul className="desktop_menu flex flex-row items-center justify-center">
+        <ul className="desktop_menu lg:text-lg text-xs flex flex-row items-center justify-center">
           <a href={"/"} className=" p-3 rounded-full">
             <li>Home</li>
           </a>

@@ -41,6 +41,7 @@ import { followUser, unfollowUser } from "./reusables/followUnfollow";
 import { FollowersList } from "./components/Follow";
 import Settings from "./pages/Settings";
 import NichePosts from "./pages/NichePosts";
+import { Switch } from "@headlessui/react";
 
 interface Post {
   id: string;
@@ -98,7 +99,9 @@ export default function App() {
 
   const [submitting, setSubmitting] = useState<boolean>(false);
 
-  const [isPostDeleted, setIsPostDeleted] = useState<boolean>(false)
+  // const [isLiked, setIsLiked] = useState<boolean>(false);
+
+  const [isPostDeleted, setIsPostDeleted] = useState<boolean>(false);
   // variable for the maxLength for the post titles
   const maxLength = 10;
 
@@ -281,26 +284,48 @@ export default function App() {
   };
 
   const handleLike = async (postId: string) => {
-    const userId = auth.currentUser?.uid;
+    if (!auth.currentUser) {
+      console.error("User is not authenticated.");
+      return;
+    }
 
-    if (!userId) return;
-
+    const userId = auth.currentUser.uid;
     const postRef = doc(db, "posts", postId);
-    const postDoc = await getDoc(postRef);
+    const post = posts.find((p) => p.id === postId);
 
-    if (postDoc.exists()) {
-      const postData = postDoc.data();
-      const likes = postData.likes || [];
+    if (!post) {
+      console.error("Post not found");
+      return;
+    }
 
-      if (likes.includes(userId)) {
+    try {
+      if (post.likes.includes(userId)) {
         await updateDoc(postRef, {
           likes: arrayRemove(userId),
         });
+
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? { ...post, likes: post.likes.filter((id) => id !== userId) }
+              : post
+          )
+        );
       } else {
         await updateDoc(postRef, {
           likes: arrayUnion(userId),
         });
+
+        setPosts((prevPosts) =>
+          prevPosts.map((post) =>
+            post.id === postId
+              ? { ...post, likes: [...post.likes, userId] }
+              : post
+          )
+        );
       }
+    } catch (error) {
+      console.error("Error updating likes: ", error);
     }
   };
 
@@ -404,7 +429,7 @@ export default function App() {
         handleDeleteComment,
         submitting,
         isPostDeleted,
-        setIsPostDeleted
+        setIsPostDeleted,
       }}
     >
       <main className=" bg-white text-black h-max">
@@ -412,9 +437,9 @@ export default function App() {
         <Router>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/post/:postId" element={<PostDetail />} />
             <Route path="/create-post" element={<CreatePost />} />
             {/* <Route path="/posts" element={<Stories />} /> */}
-            <Route path="/post/:postId" element={<PostDetail />} />
             <Route path="/authors" element={<Author />} />
             <Route path="/userposts" element={<MyPosts />} />
             <Route path="/followers" element={<FollowersList />} />

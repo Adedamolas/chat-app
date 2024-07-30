@@ -34,17 +34,19 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
         {post.comments.map((comment, index) => (
           <div
             key={index}
-            className=" bg-gray-300 w-fit p-3 rounded-xl text-sm"
+            className=" bg-gray-300 flex flex-col gap-1 w-fit h-min p-2 rounded-xl text-sm"
           >
             <div className=" flex flex-row items-center justify-between gap-2 px-2">
-              {comment.profileImage && (
-                <img
-                  src={comment.profileImage}
-                  alt={`${comment.userName}'s profile`}
-                  className=" w-8 rounded-full"
-                />
-              )}
-              <p>{comment.userName}</p>
+              <div className=" flex flex-row items-center gap-2">
+                {comment.profileImage && (
+                  <img
+                    src={comment.profileImage}
+                    alt={`${comment.userName}'s profile`}
+                    className=" w-8 rounded-full"
+                  />
+                )}
+                <p>{comment.userName}</p>
+              </div>
               <div>
                 {comment.userId === auth.currentUser?.uid && (
                   <span onClick={() => handleDeleteComment(post.id, comment)}>
@@ -54,8 +56,8 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
               </div>
             </div>
 
-            <div className=" px-2">
-              <p className=" font-bold px-1">{comment.comment}</p>
+            <div className=" px-1">
+              <p className=" font-bold">{comment.comment}</p>
               <p className=" text-gray-600">
                 Posted on: {comment.createdAt.toDateString()}
               </p>
@@ -72,7 +74,7 @@ export const CommentsAndLikes: React.FC<CommentsAndLikesProps> = ({
           placeholder="Add a comment"
         />
         <button type="submit" className=" bg-gray-500 flex flex-row gap-2">
-          {submitting ? ( 
+          {submitting ? (
             <>
               <Spinner />
               Submitting

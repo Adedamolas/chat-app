@@ -18,6 +18,7 @@ export interface Comment {
 }
 
 export interface Post {
+  userName: ReactNode;
   id: string;
   title: string;
   postText: string;

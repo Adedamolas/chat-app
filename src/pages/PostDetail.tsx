@@ -1,57 +1,88 @@
-import { useContext } from "react";
-import { AppContext } from "../helpers/Context";
-import {
-  RiFacebookBoxLine,
-  RiTwitterLine,
-  RiWhatsappLine,
-} from "@remixicon/react";
+import React, { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
 import { Post } from "../types/types";
+import { db } from "../firebase-config";
+import { RiChat3Fill, RiHeart3Fill } from "@remixicon/react";
 import Loader from "../loader/Loader";
-import React from "react";
 
-// interface Props {
-//   postDetail: Post | null;
-// }
-export default function () {
-  const {loading} = useContext(AppContext)
-    if (loading) {
-      return (
-        <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center items-center py-20">
-          <Loader />
-        </div>
-      );
-    }
+const PostDetails: React.FC = () => {
+  const { postId } = useParams<{ postId: string }>();
+  const [post, setPost] = useState<Post | null>(null);
+
+  useEffect(() => {
+    console.log("postId:", postId);
+    const fetchPost = async () => {
+      if (postId) {
+        const postRef = doc(db, "posts", postId);
+        const postDoc = await getDoc(postRef);
+        if (postDoc.exists()) {
+          setPost(postDoc.data() as Post);
+        } else {
+          console.error("Post not found");
+        }
+      }
+    };
+    fetchPost();
+  }, [postId]);
+
+  if (!post) {
+    return (
+      <div className="w-full h-full flex justify-center items-center py-20">
+        <Loader />
+      </div>
+    );
+  }
+
   return (
-    <section className=" flex flex-col space-y-10 w-full items-center justify-center">
-      {/* <div className=" flex flex-col space-y-7 w-[50vw]">
-        <h3>{postDetail.niche}</h3>
-        <h2>{postDetail.title}</h2>
-        <div>
+    <section className=" py-40 sm:py-32 px-72 flex flex-col items-start space-y-5">
+      <div className=" flex flex-col space-y-5">
+        <h4 className=" p-2 bg-gray-300 text-black w-min rounded-lg">{post.niche}</h4>
+        <h2 className=" text-6xl font-extrabold leading-[65px]">{post.title}</h2>
+        <div className=" flex flex-row space-x-2 items-center bg-gray-200 w-fit p-2 rounded-lg">
           <div>
             <img
-              className=" w-[50px] rounded-full"
-              src={postDetail.author.profile_image ?? undefined}
-              alt="profile pic"
+              className=" w-8 rounded-full"
+              src={post.author.profile_image || ""}
+              alt=""
             />
-            {postDetail.author.name}
           </div>
           <div>
-            <h4>{new Date(postDetail.createdAt).toLocaleString()}</h4>
+            <p>{post.author.name}</p>
+            <p> Published at: {new Date(post.createdAt).toLocaleString()}</p>
           </div>
         </div>
-        <div>
-          <RiFacebookBoxLine />
-          <RiWhatsappLine />
-          <RiTwitterLine />
+        <div className=" flex flex-row gap-3">
+          <span className=" flex flex-row gap-1">
+            <RiHeart3Fill className=" text-red-500" />
+            {post.likes.length}
+          </span>
+          <span className=" flex flex-row gap-1">
+            <RiChat3Fill />
+            {post.comments.length}
+          </span>
         </div>
       </div>
       <div>
-        <img
-          className=" w-[50px] rounded-full"
-          src={postDetail.imageUrl ?? undefined}
-          alt="profile pic"
-        />
-      </div> */}
+        <img className = " rounded-lg" src={post.imageUrl || ""} alt="" />
+      </div>
+      <div>
+        <p>{post.postText}</p>
+      </div>
+      {/* <p>{post.postText}</p> */}
+      <p>By: {post.author.name}</p>
+      <p>Likes: {post.likes.length}</p>
+      <div className=" flex flex-col gap-2">
+        {post.comments.map((comment, index) => (
+          <div key={index} className=" p-2 bg-gray-200">
+            <p>
+              {comment.userName}: {comment.comment}
+            </p>
+          </div>
+        ))}
+      </div>
     </section>
   );
-}
+};
+
+export default PostDetails;
