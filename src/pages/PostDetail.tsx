@@ -35,14 +35,18 @@ const PostDetails: React.FC = () => {
   }
 
   return (
-    <section className=" py-40 sm:py-32 px-72 flex flex-col items-start space-y-5">
+    <section className=" py-40 sm:py-32 md:px-12 px-72 flex flex-col items-start space-y-5">
       <div className=" flex flex-col space-y-5">
-        <h4 className=" p-2 bg-gray-300 text-black w-min rounded-lg">{post.niche}</h4>
-        <h2 className=" text-6xl font-extrabold leading-[65px]">{post.title}</h2>
+        <h4 className=" p-2 bg-gray-300 text-black w-min rounded-lg">
+          {post.niche}
+        </h4>
+        <h2 className=" text-6xl font-extrabold leading-[65px]">
+          {post.title}
+        </h2>
         <div className=" flex flex-row space-x-2 items-center bg-gray-200 w-fit p-2 rounded-lg">
           <div>
             <img
-              className=" w-8 rounded-full"
+              className=" w-8 sm:w-4 rounded-full"
               src={post.author.profile_image || ""}
               alt=""
             />
@@ -64,7 +68,7 @@ const PostDetails: React.FC = () => {
         </div>
       </div>
       <div>
-        <img className = " rounded-lg" src={post.imageUrl || ""} alt="" />
+        <img className=" rounded-lg" src={post.imageUrl || ""} alt="" />
       </div>
       <div>
         <p>{post.postText}</p>
@@ -72,14 +76,30 @@ const PostDetails: React.FC = () => {
       {/* <p>{post.postText}</p> */}
       <p>By: {post.author.name}</p>
       <p>Likes: {post.likes.length}</p>
-      <div className=" flex flex-col gap-2">
-        {post.comments.map((comment, index) => (
-          <div key={index} className=" p-2 bg-gray-200">
-            <p>
-              {comment.userName}: {comment.comment}
-            </p>
-          </div>
-        ))}
+      <div className=" flex flex-col justify-start space-y-4">
+        <h3>
+          Comments:
+        </h3>
+        <div className=" grid grid-cols-2 flex-col gap-2">
+          {post.comments.map((comment, index) => (
+            <div
+              key={index}
+              className=" p-2 bg-gray-200 flex flex-row justify-between items-center space-x-4 rounded-lg"
+            >
+              <div>
+                <p className=" text-gray-700">{comment.userName}:</p>
+                <p className=" font-bold">{comment.comment}.</p>
+              </div>
+              <div>
+                <img
+                  className=" w-8 rounded-full"
+                  src={comment.profileImage || ""}
+                  alt="img"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

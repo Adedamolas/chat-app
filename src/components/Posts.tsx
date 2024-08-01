@@ -19,13 +19,8 @@ import Like from "../lib/Framer-Motion/LikeButton";
 import LikeButton from "../lib/Framer-Motion/LikeButton";
 import { useNavigate } from "react-router-dom";
 
-type PostProps = {
-  id: string;
-  title: string;
-  postText: string;
-};
 
-export default function Posts({ id, title, postText }: PostProps) {
+export default function Posts() {
   const {
     posts,
     closeModal,

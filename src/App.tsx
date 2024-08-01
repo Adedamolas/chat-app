@@ -42,6 +42,7 @@ import { FollowersList } from "./components/Follow";
 import Settings from "./pages/Settings";
 import NichePosts from "./pages/NichePosts";
 import { Switch } from "@headlessui/react";
+import { getUserBookmarks, toggleBookmark } from "./types/bookmarkService";
 
 interface Post {
   id: string;
@@ -64,6 +65,8 @@ interface Post {
     }
   ];
   likes: string[];
+  postId: string;
+  userId: string;
 }
 export default function App() {
   // Auth for user
@@ -102,6 +105,8 @@ export default function App() {
   // const [isLiked, setIsLiked] = useState<boolean>(false);
 
   const [isPostDeleted, setIsPostDeleted] = useState<boolean>(false);
+
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   // variable for the maxLength for the post titles
   const maxLength = 10;
 
@@ -372,6 +377,43 @@ export default function App() {
     }
   };
 
+  //   const toggleBookmark = async (userId: string, postId: string, isBookmarked: boolean) => {
+  //   const userRef = doc(db, 'users', userId);
+  //   if (isBookmarked) {
+  //     // Remove bookmark
+  //     await updateDoc(userRef, {
+  //       bookmarks: arrayRemove(postId)
+  //     });
+  //   } else {
+  //     // Add bookmark
+  //     await updateDoc(userRef, {
+  //       bookmarks: arrayUnion(postId)
+  //     });
+  //   }
+  // };
+
+  // const getUserBookmarks = async (userId: string) => {
+  //   const userRef = doc(db, "users", userId);
+  //   const userDoc = await getDoc(userRef);
+  //   if (userDoc.exists()) {
+  //     return userDoc.data().bookmarks || [];
+  //   }
+  //   return [];
+  // };
+
+  // useEffect(() => {
+  //   const fetchBookmarks = async (userId: string) => {
+  //     const bookmarks = await getUserBookmarks();userId
+  //     setIsBookmarked(bookmarks.includes(postId));
+  //   };
+  //   fetchBookmarks();
+  // }, [postId, userId]);
+
+  // const handleBookmarkClick = async () => {
+  //   await toggleBookmark(userId, postId, isBookmarked);
+  //   setIsBookmarked(!isBookmarked);
+  // };
+
   const openModal = (post: Post) => {
     setSelectedPost(post);
   };
@@ -430,6 +472,7 @@ export default function App() {
         submitting,
         isPostDeleted,
         setIsPostDeleted,
+        toggleBookmark,
       }}
     >
       <main className=" bg-white text-black h-max">
