@@ -107,6 +107,8 @@ export default function App() {
   const [isPostDeleted, setIsPostDeleted] = useState<boolean>(false);
 
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
+
+  const [nickName, setNickName] = useState<string>("")
   // variable for the maxLength for the post titles
   const maxLength = 10;
 
@@ -377,6 +379,19 @@ export default function App() {
     }
   };
 
+ const setNickname = async (userId: string, nickname: string) => {
+   try {
+     const userRef = doc(db, "users", userId);
+     await updateDoc(userRef, {
+       nickname: nickname,
+     });
+     console.log("Nickname updated successfully.");
+   } catch (error) {
+     console.error("Error updating nickname:", error);
+   }
+ };
+
+ console.log(nickName)
   //   const toggleBookmark = async (userId: string, postId: string, isBookmarked: boolean) => {
   //   const userRef = doc(db, 'users', userId);
   //   if (isBookmarked) {
@@ -473,6 +488,8 @@ export default function App() {
         isPostDeleted,
         setIsPostDeleted,
         toggleBookmark,
+        nickName,
+        setNickName,
       }}
     >
       <main className=" bg-white text-black h-max">

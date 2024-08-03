@@ -16,7 +16,8 @@ interface Props {
 export default function Navbar({ isAuth, signUserOut }: Props) {
   const links = [
     { href: "/userposts", label: "My Posts" },
-    { href: "/explore", label: "Explore" },
+    // { href: "/explore", label: "Explore" },
+    { href: "/bookmarks", label: "My Bookmarks" },
     { href: "/followers", label: "My Followers" },
     { href: "/settings", label: "Settings" },
   ];

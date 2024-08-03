@@ -13,3 +13,12 @@
     display: none;
   }
 }
+
+
+/* styles.css */
+.toastify-custom {
+  background: rgba(255, 255, 255, 0.2); /* Transparent background */
+  backdrop-filter: blur(10px); /* Blur effect */
+  border-radius: 10px; /* Border radius */
+  color: #000; /* Text color */
+}
