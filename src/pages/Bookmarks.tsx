@@ -67,14 +67,14 @@ const Bookmarks: React.FC = () => {
         <div className=" flex flex-col space-y-5">
           <ul>
             {bookmarkedPosts.map((post : Post) => (
-              <div className=" flex flex-row space-x-2 p-5 items-center">
+              <div className=" flex flex-row space-x-2 p-5 items-center w-full">
                 <div
                   className=" bg-center bg-cover w-72 h-56 rounded-xl relative"
                   style={{ backgroundImage: `url(${post.imageUrl})` }}
                 ></div>
-                <li key={post.id} className=" flex flex-col spaxe-y-3">
-                  <h4 className=" text-xl font-bold">{post.title}</h4>
-                  <p className=" w-1/2 text-sm">
+                <li key={post.id} className=" w-1/2">
+                  <h4 className=" text-xl font-bold w-1/2">{post.title}</h4>
+                  <p className=" w-3/4 text-sm">
                     <TruncatedText text={post.postText} maxLength={300} />
                   </p>
                   <p>
