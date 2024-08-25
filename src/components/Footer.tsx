@@ -6,7 +6,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-white dark:bg-gray-900 m-auto mt-[] mx-auto">
+    <footer className="bg-white dark:bg-gray-900 m-auto -mb-[100%] mx-auto">
       <div className="container px-16 py-12 mx-auto mt-auto">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:gap-y-10 lg:grid-cols-4">
           <div className="sm:col-span-2">

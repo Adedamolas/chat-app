@@ -44,7 +44,7 @@ export default function Settings() {
     <div className=" w-full h-full space-y-5 flex flex-col align-middle justify-start place-items-middle py-48 sm:py-32 items-center">
       <div>
         <h2 className=" font-extrabold">Settings</h2>
-        <h2> Welcome, {nickName} </h2>
+        <h2> Welcome, {auth.currentUser?.displayName} </h2>
       </div>
       <div className=" flex flex-col gap-4 px-44 w-full">
         <Field className=" flex flex-row w-full justify-between">

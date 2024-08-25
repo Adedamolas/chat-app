@@ -19,7 +19,7 @@ export default function Author() {
       <div>
         <h2 className=" font-bold">Authors</h2>
       </div>
-      <div className=" grid grid-cols-1 sm:grid-cols-2 gap-20 justify-between">
+      <div className=" grid grid-cols-1 sm:grid-cols-2 gap-14 justify-between">
         {authors.map((author: Authors) => {
           return (
             <div
@@ -32,7 +32,7 @@ export default function Author() {
                 className=" rounded-full w-7 h-7 sm:w-14 sm:h-14"
               />
               <h3 className=" font-md text-base sm:text-lg">{author.name}</h3>
-              <FollowButton targetUserId={""} />
+              {/* <FollowButton targetUserId={""} /> */}
             </div>
           );
         })}

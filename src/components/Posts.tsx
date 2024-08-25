@@ -1,10 +1,16 @@
 import {
+  RiBook2Fill,
+  RiBookmark2Fill,
+  RiBookmark2Line,
+  RiBookmarkFill,
+  RiBookmarkLine,
   RiChat3Fill,
   RiChat3Line,
   RiCloseLargeLine,
   RiDeleteBin2Line,
   RiHeart3Fill,
   RiHeart3Line,
+  RiImage2Line,
 } from "@remixicon/react";
 import TruncatedText from "../reusables/TruncateText";
 import { Post, Post as PostType } from "../types/types";
@@ -27,8 +33,10 @@ export default function Posts() {
     selectedPost,
     handleAddComment,
     handleDeleteComment,
+    handleBookmark,
     handleLike,
     openModal,
+    isBookmarked
   } = useContext(AppContext);
   const maxLength = 18;
   const navigate = useNavigate();
@@ -45,12 +53,18 @@ export default function Posts() {
             key={post.id}
             className=" flex flex-col gap-5 text-left items-center py-4 relative"
           >
-            {post.imageUrl && (
+            {post.imageUrl ? (
               <div
                 onClick={() => handleRoute(post.id)}
                 className=" bg-center bg-cover w-64 h-56 rounded-xl relative cursor-pointer"
                 style={{ backgroundImage: `url(${post.imageUrl})` }}
               ></div>
+            ) : (
+              <div className=" flex flex-col justify-center items-center w-64 h-56 rounded-xl relative cursor-pointer bg-black">
+                <span className=" p-1 rounded-md bg-gray-400">
+                  <RiImage2Line />
+                </span>
+              </div>
             )}
             <div className=" flex flex-col items-start space-y-2 rounded-lg bg-gray-300 w-[90%] p-2 -translate-y-24 shadow-blue-500 drop-shadow-lg">
               <div className=" flex flex-row justify-between items-center w-fit space-x-10">
@@ -88,6 +102,19 @@ export default function Posts() {
                     <RiChat3Fill />
                   </span>
                   <p className=" flex flex-row">{post.comments.length}</p>
+                </div>
+
+                <div>
+                  <span
+                    className=" cursor-pointer"
+                    onClick={() => handleBookmark(post.id)}
+                  >
+                    {post.bookmarkedBy.includes(auth.currentUser?.uid || "") ? (
+                      <RiBookmarkFill className=" text-blue-600" />
+                    ) : (
+                      <RiBookmarkLine />
+                    )}
+                  </span>
                 </div>
               </div>
             </div>

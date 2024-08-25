@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { Post } from "../types/types";
 import { db } from "../firebase-config";
-import { RiChat3Fill, RiHeart3Fill } from "@remixicon/react";
+import { RiChat3Fill, RiHeart3Fill, RiImage2Line } from "@remixicon/react";
 import Loader from "../loader/Loader";
 
 const PostDetails: React.FC = () => {
@@ -46,12 +46,12 @@ const PostDetails: React.FC = () => {
         <div className=" flex flex-row space-x-2 items-center bg-gray-200 w-fit p-2 rounded-lg">
           <div>
             <img
-              className=" w-8 sm:w-4 rounded-full"
+              className=" w-8 sm:w-8 rounded-full"
               src={post.author.profile_image || ""}
               alt=""
             />
           </div>
-          <div>
+          <div className=" text-sm">
             <p>{post.author.name}</p>
             <p> Published at: {new Date(post.createdAt).toLocaleString()}</p>
           </div>
@@ -67,9 +67,19 @@ const PostDetails: React.FC = () => {
           </span>
         </div>
       </div>
-      <div>
-        <img className=" rounded-lg" src={post.imageUrl || ""} alt="" />
-      </div>
+      {post.imageUrl ? (
+        <div
+          className=" w-[40rem] h-80 bg-cover bg-center"
+          style={{ backgroundImage: `url(${post.imageUrl})` }}
+        ></div>
+      ) : (
+        <div className=" flex flex-col items-center justify-center w-[40rem] h-80 bg-gray-400">
+          <span className=" p-1 rounded-md bg-gray-400">
+            <RiImage2Line />
+          </span>
+        </div>
+      )}
+
       <div>
         <p>{post.postText}</p>
       </div>
@@ -77,9 +87,7 @@ const PostDetails: React.FC = () => {
       <p>By: {post.author.name}</p>
       <p>Likes: {post.likes.length}</p>
       <div className=" flex flex-col justify-start space-y-4">
-        <h3>
-          Comments:
-        </h3>
+        <h3>Comments:</h3>
         <div className=" grid grid-cols-2 flex-col gap-2">
           {post.comments.map((comment, index) => (
             <div

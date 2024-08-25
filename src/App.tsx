@@ -25,6 +25,7 @@ import {
   getDocs,
   onSnapshot,
   query,
+  runTransaction,
   Timestamp,
   updateDoc,
   where,
@@ -43,6 +44,9 @@ import Settings from "./pages/Settings";
 import NichePosts from "./pages/NichePosts";
 import { Switch } from "@headlessui/react";
 import { getUserBookmarks, toggleBookmark } from "./types/bookmarkService";
+import Bookmarks from "./pages/Bookmarks";
+import { ToastContainer } from "react-toastify";
+import ToastNotification from "./reusables/ToastNotification";
 
 interface Post {
   id: string;
@@ -67,6 +71,7 @@ interface Post {
   likes: string[];
   postId: string;
   userId: string;
+  bookmarkedBy: string[];
 }
 export default function App() {
   // Auth for user
@@ -108,7 +113,7 @@ export default function App() {
 
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
 
-  const [nickName, setNickName] = useState<string>("")
+  const [nickName, setNickName] = useState<string>("");
   // variable for the maxLength for the post titles
   const maxLength = 10;
 
@@ -159,14 +164,14 @@ export default function App() {
           createdAt: (data.createdAt as Timestamp).toDate(),
           comments,
           likes: data.likes || [],
+          bookmarkedBy: data.bookmarkedBy || [], // <-- Handling bookmarks
         };
-      }) as unknown as Post[];
+      }) as Post[];
 
       setPosts(postsList);
       setLoading(false);
     });
 
-    // Clean up the subscription
     return () => unsubscribe();
   }, []);
 
@@ -379,19 +384,59 @@ export default function App() {
     }
   };
 
- const setNickname = async (userId: string, nickname: string) => {
-   try {
-     const userRef = doc(db, "users", userId);
-     await updateDoc(userRef, {
-       nickname: nickname,
-     });
-     console.log("Nickname updated successfully.");
-   } catch (error) {
-     console.error("Error updating nickname:", error);
-   }
- };
+  const setNickname = async (userId: string, nickname: string) => {
+    try {
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {
+        nickname: nickname,
+      });
+      console.log("Nickname updated successfully.");
+    } catch (error) {
+      console.error("Error updating nickname:", error);
+    }
+  };
 
- console.log(nickName)
+  console.log(nickName);
+
+  const handleBookmark = async (postId: string) => {
+    if (!auth.currentUser) return;
+
+    const userId = auth.currentUser.uid;
+    const postRef = doc(db, "posts", postId);
+
+    try {
+      await runTransaction(db, async (transaction) => {
+        const postDoc = await transaction.get(postRef);
+        if (!postDoc.exists()) {
+          throw "Post does not exist!";
+        }
+
+        const postData = postDoc.data();
+        const bookmarkedBy = postData.bookmarkedBy || [];
+
+        if (bookmarkedBy.includes(userId)) {
+          // If already bookmarked, remove the bookmark
+          transaction.update(postRef, {
+            bookmarkedBy: arrayRemove(userId),
+          });
+        } else {
+          // If not bookmarked, add the bookmark
+          transaction.update(postRef, {
+            bookmarkedBy: arrayUnion(userId),
+          });
+        }
+      });
+    } catch (e) {
+      console.error("Bookmark failed: ", e);
+    }
+
+    <ToastNotification
+      message="Post bookmarked!"
+      duration={3000}
+      backgroundColor="green"
+    />;
+  };
+
   //   const toggleBookmark = async (userId: string, postId: string, isBookmarked: boolean) => {
   //   const userRef = doc(db, 'users', userId);
   //   if (isBookmarked) {
@@ -484,9 +529,12 @@ export default function App() {
         handleLike,
         handleAddComment,
         handleDeleteComment,
+        handleBookmark,
         submitting,
         isPostDeleted,
         setIsPostDeleted,
+        isBookmarked,
+        setIsBookmarked,
         toggleBookmark,
         nickName,
         setNickName,
@@ -503,6 +551,7 @@ export default function App() {
             <Route path="/authors" element={<Author />} />
             <Route path="/userposts" element={<MyPosts />} />
             <Route path="/followers" element={<FollowersList />} />
+            <Route path="/bookmarks" element={<Bookmarks />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/niche/:niche" element={<NichePosts />} />{" "}
             <Route
@@ -515,7 +564,9 @@ export default function App() {
             />
           </Routes>
         </Router>
-        <Footer />
+        <section className=" mt-[10%]">
+          <Footer />
+        </section>
       </main>
     </AppContext.Provider>
   );

@@ -14,12 +14,12 @@ import Loader from "../loader/Loader";
 import { AppContext } from "../helpers/Context";
 import { RiInformation2Line, RiInformationLine } from "@remixicon/react";
 import Info from "../reusables/Info";
-import Spinner from "../loader/Spinner";
+import Spinner from "../loader/Spinner"
 
 export default function CreatePost() {
   const navigate = useNavigate();
 
-  const {isAuth} = useContext(AppContext)
+  const { isAuth } = useContext(AppContext);
 
   const [title, setTitle] = useState("");
   const [postText, setPostText] = useState("");
@@ -44,11 +44,11 @@ export default function CreatePost() {
       return;
     }
     if (!title) {
-      return(
+      return (
         <>
           <p>Write something first baba.</p>
         </>
-      )
+      );
     }
     setLoading(true);
     let imageUrl = "";
@@ -99,14 +99,13 @@ export default function CreatePost() {
       setLoading(true);
     } catch (error) {
       console.error("Error adding document:", error);
-    }
-    finally{
+    } finally {
       setUploading(false);
     }
   };
 
   if (!isAuth) {
-    navigate("/login")
+    navigate("/login");
   }
   // console.log(title)
 
@@ -122,21 +121,32 @@ export default function CreatePost() {
           src="https://tenor.com/view/just-write-i-am-writing-must-write-tappity-tap-time-to-write-gif-1858595896619860480.gif"
           alt=""
         />
-        <div className=" flex flex-row items-center gap-2">
-          <h3 className=" font-bold">Creating Post.... </h3>
-          <p className=" px-2 bg-gray-400 w-min h-min rounded-lg">{progress}</p>
+        <div className=" flex flex-col justify-center items-center gap-2">
+          <h2 className=" font-bold">Creating Post.... </h2>
+          <p className=" text-4xl px-2 bg-gray-400 w-min h-min rounded-lg">
+            {progress}
+          </p>
         </div>
-        <button className="" onClick={createPost} disabled={loading}>
-          {loading ? "Submitting Post" : "Submit"}
-          {/* <Spinner /> */}
-        </button>
+        {loading ? (
+          ""
+        ) : (
+          <button className="" onClick={createPost} disabled={loading}>
+            Submit
+          </button>
+        )}
       </div>
     );
   }
   return (
     <div className=" w-full h-full flex flex-col align-middle justify-center place-items-center py-48 sm:py-32 items-center">
-      <h3 className=" font-bold md:w-fit w-[%]"> Create your un-filtered post. </h3>
-      <form onSubmit= {createPost} className=" flex flex-col gap-5 items-start text-start justify-center place-items-center pl-16">
+      <h3 className=" font-bold md:w-fit w-[%]">
+        {" "}
+        Create your un-filtered post.{" "}
+      </h3>
+      <form
+        onSubmit={createPost}
+        className=" flex flex-col gap-5 items-start text-start justify-center place-items-center pl-16"
+      >
         <label htmlFor="Title">Title</label>
         <input
           required

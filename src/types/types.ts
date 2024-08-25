@@ -18,6 +18,7 @@ export interface Comment {
 }
 
 export interface Post {
+  bookmarkedBy: string[];
   // userName: ReactNode;
   id: string;
   title: string;
