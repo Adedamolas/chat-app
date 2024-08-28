@@ -15,6 +15,7 @@ import { AppContext } from "../helpers/Context";
 import { RiInformation2Line, RiInformationLine } from "@remixicon/react";
 import Info from "../reusables/Info";
 import Spinner from "../loader/Spinner"
+import "../App.css"
 
 export default function CreatePost() {
   const navigate = useNavigate();
@@ -123,9 +124,15 @@ export default function CreatePost() {
         />
         <div className=" flex flex-col justify-center items-center gap-2">
           <h2 className=" font-bold">Creating Post.... </h2>
-          <p className=" text-4xl px-2 bg-gray-400 w-min h-min rounded-lg">
-            {progress}
+          <p className=" text-xl px-2 w-fit h-min rounded-lg">
+            Uploading: {Math.round(progress)}%
           </p>
+          <div className="progress-bar">
+            <div
+              className="progress-bar-fill"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
         </div>
         {loading ? (
           ""

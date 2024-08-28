@@ -87,7 +87,10 @@ export default function NichePosts(){
                 )}
                 <div className=" flex flex-col items-start space-y-2 rounded-lg bg-gray-300 w-fit p-2 -translate-y-24 shadow-blue-500 drop-shadow-lg">
                   <div className=" flex flex-row justify-between items-center w-fit space-x-10">
-                    <h3 className=" font-bold text-xl">
+                    <h3
+                      onClick={() => handleRoute(post.id)}
+                      className=" font-bold text-xl cursor-pointer"
+                    >
                       <TruncatedText text={post.title} maxLength={maxLength} />
                     </h3>
                   </div>
